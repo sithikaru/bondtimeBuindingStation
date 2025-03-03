@@ -1,4 +1,5 @@
 import 'package:bondtime/Dashboard/dashboard.dart';
+import 'package:bondtime/signin/sign_in_screen.dart';
 import 'package:bondtime/signup/baby_registration_screen.dart';
 import 'package:bondtime/signup/onboarding_screen.dart';
 import 'package:bondtime/signup/sign_up_screen.dart';
@@ -33,7 +34,8 @@ class MyApp extends StatelessWidget {
         '/': (context) => const OnboardingScreen(), // Initial screen
         '/sign-up': (context) => const SignUpScreen(),
         '/baby-registration': (context) => const BabyRegistrationScreen(),
-        '/home': (context) => const DashboardScreen(), // Add this line
+        '/dashboard': (context) => const DashboardScreen(),
+        '/sign-in': (context) => const SignInScreen(),
       },
     );
   }

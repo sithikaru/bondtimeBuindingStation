@@ -103,8 +103,7 @@ class _BabyRegistrationScreenState extends State<BabyRegistrationScreen> {
         },
       });
 
-      // Navigate to the next screen (e.g., home screen)
-      Navigator.pushNamed(context, '/home');
+      Navigator.pushNamed(context, '/dashboard');
     } catch (e) {
       ScaffoldMessenger.of(
         context,
