@@ -248,7 +248,9 @@ class _SignInScreenState extends State<SignInScreen> {
             const SizedBox(height: 10),
             Center(
               child: TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.pushReplacementNamed(context, '/forgotPassword');
+                },
                 style: ButtonStyle(
                   foregroundColor: WidgetStateProperty.all(
                     const Color(0xFF676767),

@@ -33,9 +33,10 @@ class DateSelector extends StatelessWidget {
                       Text(
                         days[index],
                         style: TextStyle(
-                          color: index < selectedIndex
-                              ? Color(0xFF111111) // Past days black
-                              : Color(0xFFC1C1C1), // Future days grey
+                          color:
+                              index < selectedIndex
+                                  ? Color(0xFF111111) // Past days black
+                                  : Color(0xFFC1C1C1), // Future days grey
                           fontSize: 14,
                         ),
                       ),

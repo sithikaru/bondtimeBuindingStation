@@ -68,6 +68,12 @@
       "languageVersion": "3.1"
     },
     {
+      "name": "equatable",
+      "rootUri": "file:///Users/zijja/.pub-cache/hosted/pub.dev/equatable-2.0.7",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "facebook_auth_desktop",
       "rootUri": "file:///Users/zijja/.pub-cache/hosted/pub.dev/facebook_auth_desktop-2.1.1",
       "packageUri": "lib/",
@@ -156,6 +162,12 @@
       "rootUri": "file:///Users/zijja/.pub-cache/hosted/pub.dev/firebase_storage_web-3.10.11",
       "packageUri": "lib/",
       "languageVersion": "3.4"
+    },
+    {
+      "name": "fl_chart",
+      "rootUri": "file:///Users/zijja/.pub-cache/hosted/pub.dev/fl_chart-0.70.2",
+      "packageUri": "lib/",
+      "languageVersion": "3.2"
     },
     {
       "name": "flutter",
@@ -392,6 +404,12 @@
       "languageVersion": "3.5"
     },
     {
+      "name": "pin_code_fields",
+      "rootUri": "file:///Users/zijja/.pub-cache/hosted/pub.dev/pin_code_fields-8.0.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "platform",
       "rootUri": "file:///Users/zijja/.pub-cache/hosted/pub.dev/platform-3.1.6",
       "packageUri": "lib/",
@@ -530,7 +548,7 @@
       "languageVersion": "3.7"
     }
   ],
-  "generated": "2025-03-03T04:47:30.384075Z",
+  "generated": "2025-03-03T09:29:50.416779Z",
   "generator": "pub",
   "generatorVersion": "3.7.0",
   "flutterRoot": "file:///opt/homebrew/Caskroom/flutter/3.29.0/flutter",

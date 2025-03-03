@@ -43,35 +43,45 @@ class _BottomNavBarState extends State<BottomNavBar> {
         items: [
           BottomNavigationBarItem(
             icon: SvgPicture.asset(
-              _selectedIndex == 0 ? "assets/icons/dashboard_selected.svg" : "assets/icons/dashboard.svg",
+              _selectedIndex == 0
+                  ? "assets/icons/dashboard_selected.svg"
+                  : "assets/icons/dashboard.svg",
               width: 24,
             ),
             label: "dashboard",
           ),
           BottomNavigationBarItem(
             icon: SvgPicture.asset(
-              _selectedIndex == 1 ? "assets/icons/bondy_selected.svg" : "assets/icons/bondy.svg",
+              _selectedIndex == 1
+                  ? "assets/icons/bondy_selected.svg"
+                  : "assets/icons/bondy.svg",
               width: 24,
             ),
             label: "bondy",
           ),
           BottomNavigationBarItem(
             icon: SvgPicture.asset(
-              _selectedIndex == 2 ? "assets/icons/activities_selected.svg" : "assets/icons/activities.svg",
+              _selectedIndex == 2
+                  ? "assets/icons/activities_selected.svg"
+                  : "assets/icons/activities.svg",
               width: 24,
             ),
             label: "activities",
           ),
           BottomNavigationBarItem(
             icon: SvgPicture.asset(
-              _selectedIndex == 3 ? "assets/icons/pediatricians_selected.svg" : "assets/icons/pediatricians.svg",
+              _selectedIndex == 3
+                  ? "assets/icons/pediatricians_selected.svg"
+                  : "assets/icons/pediatricians.svg",
               width: 24,
             ),
             label: "pediatricians",
           ),
           BottomNavigationBarItem(
             icon: SvgPicture.asset(
-              _selectedIndex == 4 ? "assets/icons/profile_selected.svg" : "assets/icons/profile.svg",
+              _selectedIndex == 4
+                  ? "assets/icons/profile_selected.svg"
+                  : "assets/icons/profile.svg",
               width: 24,
             ),
             label: "profile",
