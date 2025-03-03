@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "33369001182",
+    "project_id": "bondtime-cs52",
+    "storage_bucket": "bondtime-cs52.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:33369001182:android:e5d2c2ce099aef7c65064f",
+        "android_client_info": {
+          "package_name": "com.example.bondtime"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "33369001182-4hf6k9vskut4gnqg46pfr22d0d7v6sp8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCNk5TJEQBiMhsJc7MDucgoqe7pxbPXtHQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "33369001182-4hf6k9vskut4gnqg46pfr22d0d7v6sp8.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "33369001182-unrighk9dh1765cofc6v3efjsrb1t60v.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.bondtime"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,27 +1,43 @@
-com.example.bondtime.app-jetified-activity-1.8.1-0 /Users/zijja/.gradle/caches/8.10.2/transforms/13dd610fda78ecd8ad3daad9b8195d7e/transformed/jetified-activity-1.8.1/res
-com.example.bondtime.app-lifecycle-viewmodel-2.7.0-1 /Users/zijja/.gradle/caches/8.10.2/transforms/1b91be3af319ede480d7185430690ee1/transformed/lifecycle-viewmodel-2.7.0/res
-com.example.bondtime.app-jetified-tracing-1.2.0-2 /Users/zijja/.gradle/caches/8.10.2/transforms/285b6d6abe2dd4ba9515886e610a7341/transformed/jetified-tracing-1.2.0/res
-com.example.bondtime.app-jetified-core-1.0.0-3 /Users/zijja/.gradle/caches/8.10.2/transforms/47506b70b93177473c53f4d5d7e77c91/transformed/jetified-core-1.0.0/res
-com.example.bondtime.app-jetified-window-1.2.0-4 /Users/zijja/.gradle/caches/8.10.2/transforms/5093ab42d2307deb2d7ac0b7f5718c38/transformed/jetified-window-1.2.0/res
-com.example.bondtime.app-fragment-1.7.1-5 /Users/zijja/.gradle/caches/8.10.2/transforms/55520e4df2220e27f13f0bbb7467d11a/transformed/fragment-1.7.1/res
-com.example.bondtime.app-jetified-profileinstaller-1.3.1-6 /Users/zijja/.gradle/caches/8.10.2/transforms/5f7dcf6815bacc3ae7f099ba801348de/transformed/jetified-profileinstaller-1.3.1/res
-com.example.bondtime.app-jetified-core-ktx-1.13.1-7 /Users/zijja/.gradle/caches/8.10.2/transforms/6ec70d4eb0351866340efe37c2014fef/transformed/jetified-core-ktx-1.13.1/res
-com.example.bondtime.app-core-1.13.1-8 /Users/zijja/.gradle/caches/8.10.2/transforms/8cf478dec41eed746328fa8046755ba2/transformed/core-1.13.1/res
-com.example.bondtime.app-jetified-savedstate-1.2.1-9 /Users/zijja/.gradle/caches/8.10.2/transforms/b3d51a44ab6b56289d4858158a1ad6dd/transformed/jetified-savedstate-1.2.1/res
-com.example.bondtime.app-lifecycle-runtime-2.7.0-10 /Users/zijja/.gradle/caches/8.10.2/transforms/c092edbccc16347970ed4f22e8da111a/transformed/lifecycle-runtime-2.7.0/res
-com.example.bondtime.app-jetified-window-java-1.2.0-11 /Users/zijja/.gradle/caches/8.10.2/transforms/c1f85211ae6978d0218d51595a7f7e62/transformed/jetified-window-java-1.2.0/res
-com.example.bondtime.app-jetified-lifecycle-viewmodel-savedstate-2.7.0-12 /Users/zijja/.gradle/caches/8.10.2/transforms/c7156a54e8f0502a1f8f57797d8b3e6e/transformed/jetified-lifecycle-viewmodel-savedstate-2.7.0/res
-com.example.bondtime.app-jetified-startup-runtime-1.1.1-13 /Users/zijja/.gradle/caches/8.10.2/transforms/e0d9d3675465ff69d847e2f781f20c61/transformed/jetified-startup-runtime-1.1.1/res
-com.example.bondtime.app-lifecycle-livedata-2.7.0-14 /Users/zijja/.gradle/caches/8.10.2/transforms/e0eede8414d1ee0e5f236daeb1a2e59a/transformed/lifecycle-livedata-2.7.0/res
-com.example.bondtime.app-lifecycle-livedata-core-2.7.0-15 /Users/zijja/.gradle/caches/8.10.2/transforms/e2e21678784b3eef6b33f576b1691a56/transformed/lifecycle-livedata-core-2.7.0/res
-com.example.bondtime.app-jetified-lifecycle-process-2.7.0-16 /Users/zijja/.gradle/caches/8.10.2/transforms/e80aa748ff6540407d8dba61c0d945fe/transformed/jetified-lifecycle-process-2.7.0/res
-com.example.bondtime.app-jetified-lifecycle-livedata-core-ktx-2.7.0-17 /Users/zijja/.gradle/caches/8.10.2/transforms/ebeb29d7113d60e59d5e0acf92f847f3/transformed/jetified-lifecycle-livedata-core-ktx-2.7.0/res
-com.example.bondtime.app-jetified-annotation-experimental-1.4.0-18 /Users/zijja/.gradle/caches/8.10.2/transforms/f09a22cdd213028a38958888c7d16e20/transformed/jetified-annotation-experimental-1.4.0/res
-com.example.bondtime.app-core-runtime-2.2.0-19 /Users/zijja/.gradle/caches/8.10.2/transforms/ff849810dfe34a0ab790c402787c149e/transformed/core-runtime-2.2.0/res
-com.example.bondtime.app-debug-20 /Users/zijja/Documents/BondTime Development/buinding studio/bondtimeBuindingStation/android/app/src/debug/res
-com.example.bondtime.app-main-21 /Users/zijja/Documents/BondTime Development/buinding studio/bondtimeBuindingStation/android/app/src/main/res
-com.example.bondtime.app-pngs-22 /Users/zijja/Documents/BondTime Development/buinding studio/bondtimeBuindingStation/build/app/generated/res/pngs/debug
-com.example.bondtime.app-resValues-23 /Users/zijja/Documents/BondTime Development/buinding studio/bondtimeBuindingStation/build/app/generated/res/resValues/debug
-com.example.bondtime.app-packageDebugResources-24 /Users/zijja/Documents/BondTime Development/buinding studio/bondtimeBuindingStation/build/app/intermediates/incremental/debug/packageDebugResources/merged.dir
-com.example.bondtime.app-packageDebugResources-25 /Users/zijja/Documents/BondTime Development/buinding studio/bondtimeBuindingStation/build/app/intermediates/incremental/debug/packageDebugResources/stripped.dir
-com.example.bondtime.app-debug-26 /Users/zijja/Documents/BondTime Development/buinding studio/bondtimeBuindingStation/build/app/intermediates/merged_res/debug/mergeDebugResources
+com.example.bondtime.app-jetified-lifecycle-process-2.7.0-0 /Users/zijja/.gradle/caches/8.10.2/transforms/0095a4dba85ef3c38f0a9652b34cd9be/transformed/jetified-lifecycle-process-2.7.0/res
+com.example.bondtime.app-lifecycle-runtime-2.7.0-1 /Users/zijja/.gradle/caches/8.10.2/transforms/07d5ffcb9c6912ffd610dc84a8004380/transformed/lifecycle-runtime-2.7.0/res
+com.example.bondtime.app-lifecycle-viewmodel-2.7.0-2 /Users/zijja/.gradle/caches/8.10.2/transforms/0df03071d3ea5a13ca8a701a85da690b/transformed/lifecycle-viewmodel-2.7.0/res
+com.example.bondtime.app-jetified-core-ktx-1.13.1-3 /Users/zijja/.gradle/caches/8.10.2/transforms/1012b3d72a26572e790cb673f126d840/transformed/jetified-core-ktx-1.13.1/res
+com.example.bondtime.app-lifecycle-livedata-2.7.0-4 /Users/zijja/.gradle/caches/8.10.2/transforms/141e4ef551e1154e2ac426f165237904/transformed/lifecycle-livedata-2.7.0/res
+com.example.bondtime.app-jetified-savedstate-1.2.1-5 /Users/zijja/.gradle/caches/8.10.2/transforms/1f37faca982b225960866422b14b0e48/transformed/jetified-savedstate-1.2.1/res
+com.example.bondtime.app-jetified-lifecycle-viewmodel-savedstate-2.7.0-6 /Users/zijja/.gradle/caches/8.10.2/transforms/23adfe722c8911b0c72ccd7b6c20c672/transformed/jetified-lifecycle-viewmodel-savedstate-2.7.0/res
+com.example.bondtime.app-lifecycle-livedata-core-2.7.0-7 /Users/zijja/.gradle/caches/8.10.2/transforms/30580628b6a4c90a31a9185e5e7442f2/transformed/lifecycle-livedata-core-2.7.0/res
+com.example.bondtime.app-jetified-lifecycle-livedata-core-ktx-2.7.0-8 /Users/zijja/.gradle/caches/8.10.2/transforms/35d43ac5b93081fc719d5206591bc8b3/transformed/jetified-lifecycle-livedata-core-ktx-2.7.0/res
+com.example.bondtime.app-fragment-1.7.1-9 /Users/zijja/.gradle/caches/8.10.2/transforms/504a3b9bc759ca6028567aaea36c5498/transformed/fragment-1.7.1/res
+com.example.bondtime.app-jetified-core-1.0.0-10 /Users/zijja/.gradle/caches/8.10.2/transforms/5231da36518c5740ff6ec8f636c4adaa/transformed/jetified-core-1.0.0/res
+com.example.bondtime.app-browser-1.4.0-11 /Users/zijja/.gradle/caches/8.10.2/transforms/6643c4258ae11fe541bbf5ee341bcb98/transformed/browser-1.4.0/res
+com.example.bondtime.app-jetified-profileinstaller-1.3.1-12 /Users/zijja/.gradle/caches/8.10.2/transforms/71c2a5c462ada5f663b8ca591b1907a5/transformed/jetified-profileinstaller-1.3.1/res
+com.example.bondtime.app-jetified-window-1.2.0-13 /Users/zijja/.gradle/caches/8.10.2/transforms/73db24a2829d8fb9cf5663cfbb96cfeb/transformed/jetified-window-1.2.0/res
+com.example.bondtime.app-jetified-annotation-experimental-1.4.0-14 /Users/zijja/.gradle/caches/8.10.2/transforms/7afb1ce17e862ead92a72a9258c9afa9/transformed/jetified-annotation-experimental-1.4.0/res
+com.example.bondtime.app-jetified-play-services-auth-20.7.0-15 /Users/zijja/.gradle/caches/8.10.2/transforms/7f3cbd85e9776d1033d598bbdc03a650/transformed/jetified-play-services-auth-20.7.0/res
+com.example.bondtime.app-core-1.13.1-16 /Users/zijja/.gradle/caches/8.10.2/transforms/7f46bbd13206153774356ca6103aa890/transformed/core-1.13.1/res
+com.example.bondtime.app-jetified-credentials-1.2.0-rc01-17 /Users/zijja/.gradle/caches/8.10.2/transforms/847a26655a62540eb6e1b568482ff8fb/transformed/jetified-credentials-1.2.0-rc01/res
+com.example.bondtime.app-jetified-window-java-1.2.0-18 /Users/zijja/.gradle/caches/8.10.2/transforms/8bb9749c6545c229064751184c200f17/transformed/jetified-window-java-1.2.0/res
+com.example.bondtime.app-core-runtime-2.2.0-19 /Users/zijja/.gradle/caches/8.10.2/transforms/8bc22c9aee1a6640ae9b0a38be5c9ed3/transformed/core-runtime-2.2.0/res
+com.example.bondtime.app-jetified-firebase-messaging-24.1.0-20 /Users/zijja/.gradle/caches/8.10.2/transforms/955eef4343b9df5ea64da940d7ac5c45/transformed/jetified-firebase-messaging-24.1.0/res
+com.example.bondtime.app-jetified-credentials-play-services-auth-1.2.0-rc01-21 /Users/zijja/.gradle/caches/8.10.2/transforms/a159499e04f9d5848eb9c527e821c718/transformed/jetified-credentials-play-services-auth-1.2.0-rc01/res
+com.example.bondtime.app-localbroadcastmanager-1.1.0-22 /Users/zijja/.gradle/caches/8.10.2/transforms/aff2a7bfa08e908128c419b32552e999/transformed/localbroadcastmanager-1.1.0/res
+com.example.bondtime.app-jetified-tracing-1.2.0-23 /Users/zijja/.gradle/caches/8.10.2/transforms/ba2395cf8fc4cc2c2d9a7b0f13aa21c0/transformed/jetified-tracing-1.2.0/res
+com.example.bondtime.app-jetified-startup-runtime-1.1.1-24 /Users/zijja/.gradle/caches/8.10.2/transforms/c4042ec9e8cc7d9cdf61197d11f01375/transformed/jetified-startup-runtime-1.1.1/res
+com.example.bondtime.app-jetified-activity-1.8.1-25 /Users/zijja/.gradle/caches/8.10.2/transforms/ca60be589f3017176b432e04a4295053/transformed/jetified-activity-1.8.1/res
+com.example.bondtime.app-jetified-play-services-basement-18.4.0-26 /Users/zijja/.gradle/caches/8.10.2/transforms/cf636ef2f0738047fe8129f320ef339e/transformed/jetified-play-services-basement-18.4.0/res
+com.example.bondtime.app-jetified-core-common-2.0.3-27 /Users/zijja/.gradle/caches/8.10.2/transforms/dc78addb618cc9a88505262f8a23e42d/transformed/jetified-core-common-2.0.3/res
+com.example.bondtime.app-jetified-play-services-base-18.1.0-28 /Users/zijja/.gradle/caches/8.10.2/transforms/eb80b7c20f86db896fc82173afcd18d6/transformed/jetified-play-services-base-18.1.0/res
+com.example.bondtime.app-jetified-firebase-common-21.0.0-29 /Users/zijja/.gradle/caches/8.10.2/transforms/ec4138de37aaf41c537b7e74e719439c/transformed/jetified-firebase-common-21.0.0/res
+com.example.bondtime.app-debug-30 /Users/zijja/Documents/BondTime Development/buinding studio/bondtimeBuindingStation/android/app/src/debug/res
+com.example.bondtime.app-main-31 /Users/zijja/Documents/BondTime Development/buinding studio/bondtimeBuindingStation/android/app/src/main/res
+com.example.bondtime.app-google-services-32 /Users/zijja/Documents/BondTime Development/buinding studio/bondtimeBuindingStation/build/app/generated/res/google-services/debug
+com.example.bondtime.app-pngs-33 /Users/zijja/Documents/BondTime Development/buinding studio/bondtimeBuindingStation/build/app/generated/res/pngs/debug
+com.example.bondtime.app-resValues-34 /Users/zijja/Documents/BondTime Development/buinding studio/bondtimeBuindingStation/build/app/generated/res/resValues/debug
+com.example.bondtime.app-packageDebugResources-35 /Users/zijja/Documents/BondTime Development/buinding studio/bondtimeBuindingStation/build/app/intermediates/incremental/debug/packageDebugResources/merged.dir
+com.example.bondtime.app-packageDebugResources-36 /Users/zijja/Documents/BondTime Development/buinding studio/bondtimeBuindingStation/build/app/intermediates/incremental/debug/packageDebugResources/stripped.dir
+com.example.bondtime.app-debug-37 /Users/zijja/Documents/BondTime Development/buinding studio/bondtimeBuindingStation/build/app/intermediates/merged_res/debug/mergeDebugResources
+com.example.bondtime.app-debug-38 /Users/zijja/Documents/BondTime Development/buinding studio/bondtimeBuindingStation/build/cloud_firestore/intermediates/packaged_res/debug/packageDebugResources
+com.example.bondtime.app-debug-39 /Users/zijja/Documents/BondTime Development/buinding studio/bondtimeBuindingStation/build/firebase_auth/intermediates/packaged_res/debug/packageDebugResources
+com.example.bondtime.app-debug-40 /Users/zijja/Documents/BondTime Development/buinding studio/bondtimeBuindingStation/build/firebase_core/intermediates/packaged_res/debug/packageDebugResources
+com.example.bondtime.app-debug-41 /Users/zijja/Documents/BondTime Development/buinding studio/bondtimeBuindingStation/build/firebase_messaging/intermediates/packaged_res/debug/packageDebugResources
+com.example.bondtime.app-debug-42 /Users/zijja/Documents/BondTime Development/buinding studio/bondtimeBuindingStation/build/firebase_storage/intermediates/packaged_res/debug/packageDebugResources
