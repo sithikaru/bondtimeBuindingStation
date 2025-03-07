@@ -248,6 +248,12 @@
       "languageVersion": "3.7"
     },
     {
+      "name": "flutter_tts",
+      "rootUri": "file:///Users/zijja/.pub-cache/hosted/pub.dev/flutter_tts-4.2.2",
+      "packageUri": "lib/",
+      "languageVersion": "3.4"
+    },
+    {
       "name": "flutter_web_plugins",
       "rootUri": "file:///opt/homebrew/Caskroom/flutter/3.29.0/flutter/packages/flutter_web_plugins",
       "packageUri": "lib/",
@@ -548,7 +554,7 @@
       "languageVersion": "3.7"
     }
   ],
-  "generated": "2025-03-03T09:29:50.416779Z",
+  "generated": "2025-03-05T09:50:32.500279Z",
   "generator": "pub",
   "generatorVersion": "3.7.0",
   "flutterRoot": "file:///opt/homebrew/Caskroom/flutter/3.29.0/flutter",

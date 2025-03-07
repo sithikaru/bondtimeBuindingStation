@@ -10,7 +10,8 @@ class TipsCard extends StatelessWidget {
   final int index;
   final int totalPages;
 
-  TipsCard({
+  const TipsCard({
+    super.key,
     required this.title,
     required this.description,
     required this.buttonText,

@@ -49,6 +49,7 @@ com.example.bondtime.app-debug-47 /Users/zijja/Documents/BondTime Development/bu
 com.example.bondtime.app-debug-48 /Users/zijja/Documents/BondTime Development/buinding studio/bondtimeBuindingStation/build/firebase_storage/intermediates/packaged_res/debug/packageDebugResources
 com.example.bondtime.app-debug-49 /Users/zijja/Documents/BondTime Development/buinding studio/bondtimeBuindingStation/build/flutter_facebook_auth/intermediates/packaged_res/debug/packageDebugResources
 com.example.bondtime.app-debug-50 /Users/zijja/Documents/BondTime Development/buinding studio/bondtimeBuindingStation/build/flutter_secure_storage/intermediates/packaged_res/debug/packageDebugResources
-com.example.bondtime.app-debug-51 /Users/zijja/Documents/BondTime Development/buinding studio/bondtimeBuindingStation/build/google_sign_in_android/intermediates/packaged_res/debug/packageDebugResources
-com.example.bondtime.app-debug-52 /Users/zijja/Documents/BondTime Development/buinding studio/bondtimeBuindingStation/build/path_provider_android/intermediates/packaged_res/debug/packageDebugResources
-com.example.bondtime.app-debug-53 /Users/zijja/Documents/BondTime Development/buinding studio/bondtimeBuindingStation/build/sign_in_with_apple/intermediates/packaged_res/debug/packageDebugResources
+com.example.bondtime.app-debug-51 /Users/zijja/Documents/BondTime Development/buinding studio/bondtimeBuindingStation/build/flutter_tts/intermediates/packaged_res/debug/packageDebugResources
+com.example.bondtime.app-debug-52 /Users/zijja/Documents/BondTime Development/buinding studio/bondtimeBuindingStation/build/google_sign_in_android/intermediates/packaged_res/debug/packageDebugResources
+com.example.bondtime.app-debug-53 /Users/zijja/Documents/BondTime Development/buinding studio/bondtimeBuindingStation/build/path_provider_android/intermediates/packaged_res/debug/packageDebugResources
+com.example.bondtime.app-debug-54 /Users/zijja/Documents/BondTime Development/buinding studio/bondtimeBuindingStation/build/sign_in_with_apple/intermediates/packaged_res/debug/packageDebugResources

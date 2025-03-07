@@ -7,6 +7,7 @@ class DailyTimeChart extends StatelessWidget {
   final Function(int) onDaySelected;
 
   const DailyTimeChart({
+    super.key,
     required this.timeSpent,
     required this.selectedDayIndex,
     required this.onDaySelected,

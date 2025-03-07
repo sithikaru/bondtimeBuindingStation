@@ -1,6 +1,7 @@
 import 'package:bondtime/Dashboard/dashboard.dart';
+import 'package:bondtime/activity/activity_screen.dart';
+import 'package:bondtime/feedback/feedback_screen.dart';
 import 'package:bondtime/signin/forgot_password_screen.dart';
-import 'package:bondtime/signin/otp_screen.dart';
 import 'package:bondtime/signin/sign_in_screen.dart';
 import 'package:bondtime/signup/baby_registration_screen.dart';
 import 'package:bondtime/signup/onboarding_screen.dart';
@@ -39,6 +40,11 @@ class MyApp extends StatelessWidget {
         '/dashboard': (context) => const DashboardScreen(),
         '/sign-in': (context) => const SignInScreen(),
         '/forgotPassword': (context) => const ForgotPasswordScreen(),
+        '/activityScreen': (context) => const ActivityScreen(),
+        '/feedbackScreen':
+            (context) => FeedbackScreen(
+              activityId: ModalRoute.of(context)!.settings.arguments as String,
+            ),
       },
     );
   }

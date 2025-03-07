@@ -1,12 +1,13 @@
-// ignore_for_file: library_private_types_in_public_api
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../widgets/bottom_navbar.dart';
-import '../widgets/activity_card.dart';
+import '../activity/activity_card.dart';
 import '../widgets/progress_bar.dart';
 import '../widgets/daily_time_chart.dart';
 import '../widgets/tips_card.dart';
+import 'package:bondtime/utils/api_service.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -24,60 +25,53 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   int rewardStars = 10;
 
-  final List<Map<String, String>> activities = [
-    {
-      "day": "Day 4",
-      "description": "Read a bedtime story to your child before sleep.",
-      "icon": "assets/icons/activity1.svg",
-    },
-    {
-      "day": "Day 4",
-      "description":
-          "10 minutes engaging with your child playing with building blocks.",
-      "icon": "assets/icons/activity1.svg",
-    },
-    {
-      "day": "Day 4",
-      "description": "Encourage your child to draw something they love.",
-      "icon": "assets/icons/activity1.svg",
-    },
-    {
-      "day": "Day 4",
-      "description": "Take a short walk outside with your child for fresh air.",
-      "icon": "assets/icons/activity1.svg",
-    },
-  ];
+  Map<String, String> activities = {
+    "Gross Motor": "Loading...",
+    "Fine Motor": "Loading...",
+    "Communication": "Loading...",
+    "Sensory": "Loading...",
+  };
 
-  final List<Map<String, String>> tips = [
-    {
-      "title": "Daily tips for mama",
-      "description": "Drink 12 cups of water (3 litres)",
-      "buttonText": "Done!",
-      "icon": "assets/icons/tips1.svg",
-    },
-    {
-      "title": "Daily tips for mama",
-      "description": "Take deep breaths and relax",
-      "buttonText": "Got it!",
-      "icon": "assets/icons/tips2.svg",
-    },
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _fetchActivities();
+  }
 
-  final List<double> timeSpent = [
-    1.5,
-    1.0,
-    1.7,
-    1.2,
-    0.8,
-    1.9,
-    0.5,
-  ]; // Hours spent per day
+  Future<void> _fetchActivities() async {
+    try {
+      String userId = FirebaseAuth.instance.currentUser!.uid;
+      // Retrieve user's document to get baby registration details
+      DocumentSnapshot userDoc =
+          await FirebaseFirestore.instance
+              .collection("users")
+              .doc(userId)
+              .get();
+      Map<String, dynamic>? childData = userDoc.get("child");
+      if (childData != null && childData.containsKey("dob")) {
+        String dobStr = childData["dob"]; // expected format "dd/mm/yyyy"
+        List<String> parts = dobStr.split("/");
+        int day = int.parse(parts[0]);
+        int month = int.parse(parts[1]);
+        int year = int.parse(parts[2]);
+        DateTime dob = DateTime(year, month, day);
+        DateTime now = DateTime.now();
+        int age = now.year - dob.year;
+        if (now.month < dob.month ||
+            (now.month == dob.month && now.day < dob.day)) {
+          age--;
+        }
 
-  // ✅ Updates the selected day when a bar in the chart is tapped
-  void updateSelectedDay(int index) {
-    setState(() {
-      selectedDayIndex = index;
-    });
+        // Fetch activities from backend API
+        var result = await ApiService.getActivities(userId, age);
+        setState(() {
+          activities = Map<String, String>.from(result["activities"]);
+        });
+      }
+    } catch (e) {
+      print("Error fetching activities: $e");
+      // Optionally, you can display an error message in the UI
+    }
   }
 
   @override
@@ -95,7 +89,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               'assets/icons/notifications.svg',
               height: 24,
               width: 24,
-              color: Colors.black,
+              colorFilter: ColorFilter.mode(Colors.black, BlendMode.srcIn),
             ),
             onPressed: () {},
           ),
@@ -105,41 +99,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
               'assets/icons/settings.svg',
               height: 24,
               width: 24,
-              color: Colors.black,
+              colorFilter: ColorFilter.mode(Colors.black, BlendMode.srcIn),
             ),
             onPressed: () {},
           ),
           SizedBox(width: 3),
-          Padding(
-            padding: const EdgeInsets.only(right: 16.0),
-            child: Container(
-              constraints: BoxConstraints(minWidth: 46, minHeight: 28),
-              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: Color(0xFFFED7D7),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    "44",
-                    style: TextStyle(
-                      color: Colors.red,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(width: 4),
-                  SvgPicture.asset(
-                    'assets/icons/streaks_icon.svg',
-                    height: 18,
-                    width: 18,
-                    color: Colors.red,
-                  ),
-                ],
-              ),
-            ),
-          ),
         ],
       ),
       bottomNavigationBar: BottomNavBar(),
@@ -180,9 +144,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     },
                     itemBuilder: (context, index) {
                       return ActivityCard(
-                        day: activities[index]["day"]!,
-                        description: activities[index]["description"]!,
-                        icon: activities[index]["icon"]!,
+                        day: "Today's Activity",
+                        description: activities.values.toList()[index],
+                        icon: "assets/icons/activity1.svg",
                         currentPage: currentPage,
                         index: index,
                         totalPages: activities.length,
@@ -198,7 +162,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   height: 175,
                   child: PageView.builder(
                     controller: _tipsPageController,
-                    itemCount: tips.length,
+                    itemCount: 2,
                     onPageChanged: (index) {
                       setState(() {
                         tipsCurrentPage = index;
@@ -206,13 +170,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     },
                     itemBuilder: (context, index) {
                       return TipsCard(
-                        title: tips[index]["title"]!,
-                        description: tips[index]["description"]!,
-                        buttonText: tips[index]["buttonText"]!,
-                        icon: tips[index]["icon"]!,
+                        title: "Daily tips for mama",
+                        description:
+                            index == 0
+                                ? "Drink 12 cups of water (3 litres)"
+                                : "Take deep breaths and relax",
+                        buttonText: index == 0 ? "Done!" : "Got it!",
+                        icon:
+                            index == 0
+                                ? "assets/icons/tips1.svg"
+                                : "assets/icons/tips2.svg",
                         currentPage: tipsCurrentPage,
                         index: index,
-                        totalPages: tips.length,
+                        totalPages: 2,
                       );
                     },
                   ),
@@ -222,10 +192,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
                 // **Daily Time Chart**
                 DailyTimeChart(
-                  timeSpent: timeSpent,
-                  selectedDayIndex:
-                      selectedDayIndex, // ✅ Controlled by tapping bars
-                  onDaySelected: updateSelectedDay, // ✅ Handles bar taps
+                  timeSpent: [1.5, 1.0, 1.7, 1.2, 0.8, 1.9, 0.5],
+                  selectedDayIndex: selectedDayIndex,
+                  onDaySelected: (index) {
+                    setState(() {
+                      selectedDayIndex = index;
+                    });
+                  },
                 ),
 
                 SizedBox(height: 24),

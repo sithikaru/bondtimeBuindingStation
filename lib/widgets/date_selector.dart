@@ -9,6 +9,7 @@ class DateSelector extends StatelessWidget {
   final Function(int) onSelectDay;
 
   const DateSelector({
+    super.key,
     required this.days,
     required this.dates,
     required this.completedDays,

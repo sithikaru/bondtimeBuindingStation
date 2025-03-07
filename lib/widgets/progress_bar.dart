@@ -4,7 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 class ProgressBar extends StatelessWidget {
   final int rewardStars;
 
-  const ProgressBar({required this.rewardStars});
+  const ProgressBar({super.key, required this.rewardStars});
 
   @override
   Widget build(BuildContext context) {
