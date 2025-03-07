@@ -40,7 +40,12 @@ class MyApp extends StatelessWidget {
         '/dashboard': (context) => const DashboardScreen(),
         '/sign-in': (context) => const SignInScreen(),
         '/forgotPassword': (context) => const ForgotPasswordScreen(),
-        '/activityScreen': (context) => const ActivityScreen(),
+        '/activityScreen':
+            (context) => ActivityScreen(
+              activity:
+                  ModalRoute.of(context)!.settings.arguments
+                      as YourActivityType,
+            ),
         '/feedbackScreen':
             (context) => FeedbackScreen(
               activityId: ModalRoute.of(context)!.settings.arguments as String,

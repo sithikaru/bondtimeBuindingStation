@@ -10,6 +10,7 @@ class ActivityScreenTwo extends StatefulWidget {
   const ActivityScreenTwo({
     super.key,
     this.currentPage = 2,
+    required Map<String, dynamic> activity,
   }); // Default to page 2
 
   @override

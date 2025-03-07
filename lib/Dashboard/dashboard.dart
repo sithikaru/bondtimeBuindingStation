@@ -17,20 +17,17 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
-  final PageController _pageController = PageController(initialPage: 1);
+  final PageController _pageController = PageController(initialPage: 0);
   final PageController _tipsPageController = PageController(initialPage: 0);
-  int currentPage = 1;
+  int currentPage = 0;
   int tipsCurrentPage = 0;
-  int selectedDayIndex = 3; // ✅ Default selected day for time chart
+  int selectedDayIndex = 3; // Default selected day for time chart
 
   int rewardStars = 10;
 
-  Map<String, String> activities = {
-    "Gross Motor": "Loading...",
-    "Fine Motor": "Loading...",
-    "Communication": "Loading...",
-    "Sensory": "Loading...",
-  };
+  List<Map<String, dynamic>> activities = [];
+  bool isLoading = true;
+  String errorMessage = '';
 
   @override
   void initState() {
@@ -39,17 +36,22 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Future<void> _fetchActivities() async {
+    setState(() {
+      isLoading = true;
+      errorMessage = '';
+    });
+
     try {
       String userId = FirebaseAuth.instance.currentUser!.uid;
-      // Retrieve user's document to get baby registration details
       DocumentSnapshot userDoc =
           await FirebaseFirestore.instance
               .collection("users")
               .doc(userId)
               .get();
+
       Map<String, dynamic>? childData = userDoc.get("child");
       if (childData != null && childData.containsKey("dob")) {
-        String dobStr = childData["dob"]; // expected format "dd/mm/yyyy"
+        String dobStr = childData["dob"]; // Expected format "dd/mm/yyyy"
         List<String> parts = dobStr.split("/");
         int day = int.parse(parts[0]);
         int month = int.parse(parts[1]);
@@ -62,22 +64,36 @@ class _DashboardScreenState extends State<DashboardScreen> {
           age--;
         }
 
-        // Fetch activities from backend API
         var result = await ApiService.getActivities(userId, age);
         setState(() {
-          activities = Map<String, String>.from(result["activities"]);
+          activities = List<Map<String, dynamic>>.from(
+            result["activities"]["activities"],
+          );
+          if (activities.isEmpty) {
+            errorMessage = 'No activities available today';
+          }
+        });
+      } else {
+        setState(() {
+          errorMessage = 'Please complete your child\'s profile';
         });
       }
     } catch (e) {
       print("Error fetching activities: $e");
-      // Optionally, you can display an error message in the UI
+      setState(() {
+        errorMessage = 'Failed to load activities';
+      });
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFFDFDFD),
+      backgroundColor: const Color(0xFFFDFDFD),
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -89,21 +105,27 @@ class _DashboardScreenState extends State<DashboardScreen> {
               'assets/icons/notifications.svg',
               height: 24,
               width: 24,
-              colorFilter: ColorFilter.mode(Colors.black, BlendMode.srcIn),
+              colorFilter: const ColorFilter.mode(
+                Colors.black,
+                BlendMode.srcIn,
+              ),
             ),
             onPressed: () {},
           ),
-          SizedBox(width: 8),
+          const SizedBox(width: 8),
           IconButton(
             icon: SvgPicture.asset(
               'assets/icons/settings.svg',
               height: 24,
               width: 24,
-              colorFilter: ColorFilter.mode(Colors.black, BlendMode.srcIn),
+              colorFilter: const ColorFilter.mode(
+                Colors.black,
+                BlendMode.srcIn,
+              ),
             ),
             onPressed: () {},
           ),
-          SizedBox(width: 3),
+          const SizedBox(width: 3),
         ],
       ),
       bottomNavigationBar: BottomNavBar(),
@@ -114,9 +136,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 0),
-
-                Text(
+                const SizedBox(height: 0),
+                const Text(
                   "Good Evening, Juan",
                   style: TextStyle(
                     fontSize: 20,
@@ -124,40 +145,78 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     fontFamily: 'InterTight',
                   ),
                 ),
-                SizedBox(height: 16),
-
-                // **Progress Bar Widget**
+                const SizedBox(height: 16),
+                // Progress Bar Widget
                 ProgressBar(rewardStars: rewardStars),
-
-                SizedBox(height: 20),
-
-                // **Slidable Activity Cards**
+                const SizedBox(height: 20),
+                // Slidable Activity Cards
                 SizedBox(
                   height: 175,
-                  child: PageView.builder(
-                    controller: _pageController,
-                    itemCount: activities.length,
-                    onPageChanged: (index) {
-                      setState(() {
-                        currentPage = index;
-                      });
-                    },
-                    itemBuilder: (context, index) {
-                      return ActivityCard(
-                        day: "Today's Activity",
-                        description: activities.values.toList()[index],
-                        icon: "assets/icons/activity1.svg",
-                        currentPage: currentPage,
-                        index: index,
-                        totalPages: activities.length,
-                      );
-                    },
-                  ),
+                  child:
+                      isLoading
+                          ? const Center(child: CircularProgressIndicator())
+                          : errorMessage.isNotEmpty
+                          ? Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(errorMessage),
+                                ElevatedButton(
+                                  onPressed: _fetchActivities,
+                                  child: const Text('Retry'),
+                                ),
+                              ],
+                            ),
+                          )
+                          : PageView.builder(
+                            controller: _pageController,
+                            itemCount: activities.length,
+                            onPageChanged: (index) {
+                              setState(() {
+                                currentPage = index;
+                              });
+                            },
+                            itemBuilder: (context, index) {
+                              String category = activities[index]['category'];
+                              String icon;
+                              switch (category) {
+                                case 'fine motor':
+                                  icon = 'assets/icons/fine_motor.svg';
+                                  break;
+                                case 'gross motor':
+                                  icon = 'assets/icons/gross_motor.svg';
+                                  break;
+                                case 'communication':
+                                  icon = 'assets/icons/communication.svg';
+                                  break;
+                                case 'sensory':
+                                  icon = 'assets/icons/sensory.svg';
+                                  break;
+                                default:
+                                  icon = 'assets/icons/activity1.svg';
+                              }
+                              return GestureDetector(
+                                onTap: () {
+                                  Navigator.pushNamed(
+                                    context,
+                                    '/activityScreen',
+                                    arguments: activities[index],
+                                  );
+                                },
+                                child: ActivityCard(
+                                  day: "Today's Activity",
+                                  activity: activities[index],
+                                  icon: icon,
+                                  currentPage: currentPage,
+                                  index: index,
+                                  totalPages: activities.length,
+                                ),
+                              );
+                            },
+                          ),
                 ),
-
-                SizedBox(height: 20),
-
-                // **Slidable Daily Tips Card**
+                const SizedBox(height: 20),
+                // Slidable Daily Tips Card
                 SizedBox(
                   height: 175,
                   child: PageView.builder(
@@ -187,10 +246,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     },
                   ),
                 ),
-
-                SizedBox(height: 20),
-
-                // **Daily Time Chart**
+                const SizedBox(height: 20),
+                // Daily Time Chart
                 DailyTimeChart(
                   timeSpent: [1.5, 1.0, 1.7, 1.2, 0.8, 1.9, 0.5],
                   selectedDayIndex: selectedDayIndex,
@@ -200,8 +257,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     });
                   },
                 ),
-
-                SizedBox(height: 24),
+                const SizedBox(height: 24),
               ],
             ),
           ),
