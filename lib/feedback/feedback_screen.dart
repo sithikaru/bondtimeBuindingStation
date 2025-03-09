@@ -1,14 +1,21 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:bondtime/Dashboard/dashboard.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import '../utils/api_service.dart';
 import '../widgets/feedback_card.dart';
 
-class FeedbackScreen extends StatelessWidget {
-  final String activityId; // Pass the activity ID
+class FeedbackScreen extends StatefulWidget {
+  final String activityId;
 
   const FeedbackScreen({super.key, required this.activityId});
 
+  @override
+  State<FeedbackScreen> createState() => _FeedbackScreenState();
+}
+
+class _FeedbackScreenState extends State<FeedbackScreen> {
   Future<void> saveFeedback(int rating, String comment) async {
     try {
       User? user = FirebaseAuth.instance.currentUser;
@@ -18,26 +25,16 @@ class FeedbackScreen extends StatelessWidget {
 
       String userId = user.uid;
 
-      // Reference to Firestore collection
-      CollectionReference feedbackCollection = FirebaseFirestore.instance
-          .collection('user_feedback');
-
-      // Save feedback
-      await feedbackCollection.doc(userId).set({
-        'userId': userId,
-        'feedback': FieldValue.arrayUnion([
-          {
-            'activityId': activityId,
-            'rating': rating,
-            'comment': comment,
-            'timestamp': FieldValue.serverTimestamp(),
-          },
-        ]),
-      }, SetOptions(merge: true));
-
-      print("Feedback saved successfully!");
+      await ApiService.submitFeedback(
+        userId,
+        widget.activityId,
+        rating,
+        comment,
+      );
     } catch (e) {
-      print("Error saving feedback: $e");
+      // Remove print in production; consider using a logger if needed
+      // print("Error saving feedback: $e");
+      rethrow; // Use rethrow to preserve stack trace
     }
   }
 
@@ -51,24 +48,35 @@ class FeedbackScreen extends StatelessWidget {
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: Center(
-        child: FeedbackCard(
-          question: "How did this activity go with your child?",
-          onNext: () async {
-            // Capture user rating and comment
-            int rating = 4; // Replace with actual rating from UI
-            String comment = "Great activity!"; // Replace with user input
-
-            await saveFeedback(rating, comment);
-
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const DashboardScreen()),
-            );
-          },
-          isLast: false,
-        ),
-      ),
+      // body: Center(
+      //   child: FeedbackCard(
+      //     question: "How did this activity go with your child?",
+      //     onNext: (int rating, String comment) async {
+      //       // Store context reference before async operation
+      //       final BuildContext currentContext = context;
+      //       try {
+      //         await saveFeedback(rating, comment);
+      //         if (mounted) {
+      //           // Check if widget is still mounted
+      //           Navigator.push(
+      //             currentContext,
+      //             MaterialPageRoute(
+      //               builder: (context) => const DashboardScreen(),
+      //             ),
+      //           );
+      //         }
+      //       } catch (e) {
+      //         if (mounted) {
+      //           // Check if widget is still mounted
+      //           ScaffoldMessenger.of(currentContext).showSnackBar(
+      //             SnackBar(content: Text("Failed to submit feedback: $e")),
+      //           );
+      //         }
+      //       }
+      //     },
+      //     isLast: false,
+      //   ),
+      // ),
     );
   }
 }

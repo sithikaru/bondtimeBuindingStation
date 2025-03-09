@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:bondtime/activity/activity_screen_two.dart'; // Hypothetical next screen
+import 'package:bondtime/activity/activity_screen_two.dart';
 
 class ActivityScreen extends StatelessWidget {
   final Map<String, dynamic> activity;

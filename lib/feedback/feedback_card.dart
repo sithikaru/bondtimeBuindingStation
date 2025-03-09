@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class FeedbackCard extends StatefulWidget {
   final String question;
-  final VoidCallback onNext;
+  final Future<void> Function(int, String) onNext;
   final bool isLast;
 
   const FeedbackCard({
@@ -17,18 +17,25 @@ class FeedbackCard extends StatefulWidget {
 }
 
 class _FeedbackCardState extends State<FeedbackCard> {
-  int selectedRating = 0; // Store selected rating
+  int selectedRating = 0;
+  final TextEditingController _commentController = TextEditingController();
+
+  @override
+  void dispose() {
+    _commentController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Center(
       child: Container(
-        width: 368, // Set width
-        height: 484, // Set height
+        width: 368,
+        height: 484,
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(18.65), // Updated corner radius
+          borderRadius: BorderRadius.circular(18.65),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.1),
@@ -90,6 +97,7 @@ class _FeedbackCardState extends State<FeedbackCard> {
             ),
             const SizedBox(height: 20),
             TextField(
+              controller: _commentController,
               decoration: InputDecoration(
                 hintText: "your thoughts?",
                 border: OutlineInputBorder(
@@ -113,7 +121,12 @@ class _FeedbackCardState extends State<FeedbackCard> {
                 onPressed:
                     selectedRating == 0
                         ? null
-                        : widget.onNext, // Disabled if no rating selected
+                        : () async {
+                          await widget.onNext(
+                            selectedRating,
+                            _commentController.text,
+                          );
+                        },
                 child: Text(
                   widget.isLast ? "Done" : "Next",
                   style: const TextStyle(

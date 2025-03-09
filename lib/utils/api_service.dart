@@ -4,20 +4,19 @@ import 'package:http/http.dart' as http;
 class ApiService {
   static const String baseUrl = "http://localhost:8000";
 
-  static Future<Map<String, dynamic>> getActivities(
-    String userId,
-    int age,
-  ) async {
+  static Future<Map<String, dynamic>> getActivities(String userId) async {
     final url = Uri.parse("$baseUrl/get-activities");
     final response = await http.post(
       url,
       headers: {"Content-Type": "application/json"},
-      body: jsonEncode({"userId": userId, "age": age}),
+      body: jsonEncode({"userId": userId}),
     );
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     } else {
-      throw Exception("Failed to fetch activities: ${response.body}");
+      throw Exception(
+        "Failed to fetch activities: ${response.statusCode} - ${response.body}",
+      );
     }
   }
 
@@ -42,7 +41,9 @@ class ApiService {
       final data = jsonDecode(response.body);
       return data["message"];
     } else {
-      throw Exception("Failed to submit feedback: ${response.body}");
+      throw Exception(
+        "Failed to submit feedback: ${response.statusCode} - ${response.body}",
+      );
     }
   }
 }

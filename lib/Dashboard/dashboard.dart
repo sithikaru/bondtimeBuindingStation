@@ -49,39 +49,69 @@ class _DashboardScreenState extends State<DashboardScreen> {
               .doc(userId)
               .get();
 
-      Map<String, dynamic>? childData = userDoc.get("child");
-      if (childData != null && childData.containsKey("dob")) {
-        String dobStr = childData["dob"]; // Expected format "dd/mm/yyyy"
-        List<String> parts = dobStr.split("/");
-        int day = int.parse(parts[0]);
-        int month = int.parse(parts[1]);
-        int year = int.parse(parts[2]);
-        DateTime dob = DateTime(year, month, day);
-        DateTime now = DateTime.now();
-        int age = now.year - dob.year;
-        if (now.month < dob.month ||
-            (now.month == dob.month && now.day < dob.day)) {
-          age--;
-        }
+      // Cast userDoc.data() to Map<String, dynamic>
+      Map<String, dynamic>? userData = userDoc.data() as Map<String, dynamic>?;
+      Map<String, dynamic>? childData = userData?["child"];
 
-        var result = await ApiService.getActivities(userId, age);
-        setState(() {
-          activities = List<Map<String, dynamic>>.from(
-            result["activities"]["activities"],
-          );
-          if (activities.isEmpty) {
-            errorMessage = 'No activities available today';
-          }
-        });
-      } else {
+      if (childData == null || !childData.containsKey("dob")) {
         setState(() {
           errorMessage = 'Please complete your child\'s profile';
         });
+        return;
       }
+
+      String dobStr = childData["dob"];
+      List<String> parts = dobStr.split("/");
+      if (parts.length != 3) {
+        throw FormatException(
+          "Invalid DOB format: $dobStr. Expected format: dd/mm/yyyy",
+        );
+      }
+
+      int day = int.parse(parts[0]);
+      int month = int.parse(parts[1]);
+      int year = int.parse(parts[2]);
+      DateTime dob = DateTime(year, month, day);
+      DateTime now = DateTime.now();
+      int age = now.year - dob.year;
+      if (now.month < dob.month ||
+          (now.month == dob.month && now.day < dob.day)) {
+        age--;
+      }
+
+      // Call API with only userId
+      var result = await ApiService.getActivities(userId);
+      print("API Response: $result"); // Debug log
+
+      if (result == null || !result.containsKey("activities")) {
+        throw Exception("Invalid API response: Missing 'activities' key");
+      }
+
+      // Convert the activities map into a list
+      List<Map<String, dynamic>> fetchedActivities = [];
+      Map<String, dynamic> activitiesMap = result["activities"];
+      activitiesMap.forEach((category, activity) {
+        fetchedActivities.add({
+          "category": category,
+          "title": activity["title"],
+          "description": activity["description"],
+          "activityId": activity["activityId"],
+        });
+      });
+
+      setState(() {
+        activities = fetchedActivities;
+        if (activities.isEmpty) {
+          errorMessage = 'No activities available today';
+        }
+      });
     } catch (e) {
       print("Error fetching activities: $e");
       setState(() {
-        errorMessage = 'Failed to load activities';
+        errorMessage =
+            e is FormatException
+                ? 'Invalid child DOB format: ${e.message}'
+                : 'Failed to load activities. Check your connection or try again later.';
       });
     } finally {
       setState(() {
@@ -180,10 +210,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               String category = activities[index]['category'];
                               String icon;
                               switch (category) {
-                                case 'fine motor':
+                                case 'fineMotor':
                                   icon = 'assets/icons/fine_motor.svg';
                                   break;
-                                case 'gross motor':
+                                case 'grossMotor':
                                   icon = 'assets/icons/gross_motor.svg';
                                   break;
                                 case 'communication':

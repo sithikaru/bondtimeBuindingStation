@@ -1,10 +1,12 @@
-import 'package:bondtime/activity/activity_screen.dart';
+import 'package:bondtime/feedback/feedback_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
 class VoiceAssistanceScreen extends StatefulWidget {
-  const VoiceAssistanceScreen({super.key});
+  final Map<String, dynamic> activity;
+
+  const VoiceAssistanceScreen({super.key, required this.activity});
 
   @override
   _VoiceAssistanceScreenState createState() => _VoiceAssistanceScreenState();
@@ -22,8 +24,6 @@ class _VoiceAssistanceScreenState extends State<VoiceAssistanceScreen> {
   @override
   void initState() {
     super.initState();
-
-    // Set TTS completion handler
     flutterTts.setCompletionHandler(() {
       setState(() {
         isPlaying = false;
@@ -87,9 +87,9 @@ class _VoiceAssistanceScreenState extends State<VoiceAssistanceScreen> {
         appBar: AppBar(
           backgroundColor: Colors.white,
           elevation: 0,
-          leadingWidth: 30, // Reduced gap between back icon and logo
+          leadingWidth: 30,
           leading: IconButton(
-            icon: Icon(Icons.arrow_back, color: Colors.black),
+            icon: const Icon(Icons.arrow_back, color: Colors.black),
             onPressed: () {
               flutterTts.stop();
               Navigator.pop(context);
@@ -98,10 +98,8 @@ class _VoiceAssistanceScreenState extends State<VoiceAssistanceScreen> {
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              // SVG Logo
               SvgPicture.asset('assets/icons/bondtime_logo.svg', height: 18),
-              // Voice Assistance Text
-              Text(
+              const Text(
                 'Voice Assistance',
                 style: TextStyle(
                   color: Colors.black,
@@ -118,7 +116,7 @@ class _VoiceAssistanceScreenState extends State<VoiceAssistanceScreen> {
               ignoring: showPopup,
               child: Column(
                 children: [
-                  SizedBox(height: 100),
+                  const SizedBox(height: 100),
                   Center(
                     child: SvgPicture.asset(
                       'assets/icons/voice_assistance.svg',
@@ -127,12 +125,12 @@ class _VoiceAssistanceScreenState extends State<VoiceAssistanceScreen> {
                       color: Colors.black,
                     ),
                   ),
-                  SizedBox(height: 40),
+                  const SizedBox(height: 40),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 30),
                     child: Text(
-                      guidanceText,
-                      style: TextStyle(
+                      widget.activity['description'] ?? guidanceText,
+                      style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w600,
                         color: Colors.black,
@@ -141,7 +139,7 @@ class _VoiceAssistanceScreenState extends State<VoiceAssistanceScreen> {
                       textAlign: TextAlign.center,
                     ),
                   ),
-                  Spacer(),
+                  const Spacer(),
                   Padding(
                     padding: const EdgeInsets.only(bottom: 80),
                     child: Row(
@@ -160,14 +158,14 @@ class _VoiceAssistanceScreenState extends State<VoiceAssistanceScreen> {
                                   width: 2,
                                 ),
                               ),
-                              child: Icon(
+                              child: const Icon(
                                 Icons.skip_previous,
                                 color: Colors.black,
                                 size: 30,
                               ),
                             ),
-                            SizedBox(height: 8),
-                            Text(
+                            const SizedBox(height: 8),
+                            const Text(
                               'Previous step',
                               style: TextStyle(
                                 fontSize: 14,
@@ -176,7 +174,7 @@ class _VoiceAssistanceScreenState extends State<VoiceAssistanceScreen> {
                             ),
                           ],
                         ),
-                        SizedBox(width: 40),
+                        const SizedBox(width: 40),
                         Container(
                           width: 90,
                           height: 90,
@@ -187,7 +185,7 @@ class _VoiceAssistanceScreenState extends State<VoiceAssistanceScreen> {
                               BoxShadow(
                                 color: Colors.black.withOpacity(0.2),
                                 blurRadius: 20,
-                                offset: Offset(0, 10),
+                                offset: const Offset(0, 10),
                               ),
                             ],
                           ),
@@ -204,7 +202,7 @@ class _VoiceAssistanceScreenState extends State<VoiceAssistanceScreen> {
                             onPressed: togglePlayPause,
                           ),
                         ),
-                        SizedBox(width: 40),
+                        const SizedBox(width: 40),
                         Column(
                           children: [
                             Container(
@@ -217,14 +215,14 @@ class _VoiceAssistanceScreenState extends State<VoiceAssistanceScreen> {
                                   width: 2,
                                 ),
                               ),
-                              child: Icon(
+                              child: const Icon(
                                 Icons.skip_next,
                                 color: Colors.black,
                                 size: 30,
                               ),
                             ),
-                            SizedBox(height: 8),
-                            Text(
+                            const SizedBox(height: 8),
+                            const Text(
                               'Next step',
                               style: TextStyle(
                                 fontSize: 14,
@@ -241,12 +239,12 @@ class _VoiceAssistanceScreenState extends State<VoiceAssistanceScreen> {
                     child: Container(
                       width: double.infinity,
                       height: 58,
-                      margin: EdgeInsets.symmetric(horizontal: 20),
+                      margin: const EdgeInsets.symmetric(horizontal: 20),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(15),
                         border: Border.all(color: Colors.black, width: 1),
                       ),
-                      child: Center(
+                      child: const Center(
                         child: Text(
                           'Completed',
                           style: TextStyle(
@@ -258,7 +256,7 @@ class _VoiceAssistanceScreenState extends State<VoiceAssistanceScreen> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 40),
+                  const SizedBox(height: 40),
                 ],
               ),
             ),
@@ -268,7 +266,7 @@ class _VoiceAssistanceScreenState extends State<VoiceAssistanceScreen> {
                 child: Container(
                   width: 344,
                   height: 207,
-                  padding: EdgeInsets.all(20),
+                  padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(20),
@@ -276,50 +274,57 @@ class _VoiceAssistanceScreenState extends State<VoiceAssistanceScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
+                      const Text(
                         'Complete Activity',
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      SizedBox(height: 10),
-                      Text('Are you sure you have completed this activity?'),
-                      SizedBox(height: 20),
+                      const SizedBox(height: 10),
+                      const Text(
+                        'Are you sure you have completed this activity?',
+                      ),
+                      const SizedBox(height: 20),
                       Row(
                         children: [
                           OutlinedButton(
                             onPressed: togglePopup,
                             style: OutlinedButton.styleFrom(
-                              fixedSize: Size(134, 48),
-                              side: BorderSide(color: Color(0xFF111111)),
+                              fixedSize: const Size(134, 48),
+                              side: const BorderSide(color: Color(0xFF111111)),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),
                               ),
                             ),
-                            child: Text(
+                            child: const Text(
                               'No, Continue',
                               style: TextStyle(color: Color(0xFF111111)),
                             ),
                           ),
-                          SizedBox(width: 10),
+                          const SizedBox(width: 10),
                           ElevatedButton(
                             onPressed: () {
                               Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => ActivityScreen(),
+                                  builder:
+                                      (context) => FeedbackScreen(
+                                        activityId:
+                                            widget.activity['activityId'] ??
+                                            'activity123',
+                                      ),
                                 ),
                               );
                             },
                             style: ElevatedButton.styleFrom(
-                              fixedSize: Size(134, 48),
-                              backgroundColor: Color(0xFF111111),
+                              fixedSize: const Size(134, 48),
+                              backgroundColor: const Color(0xFF111111),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),
                               ),
                             ),
-                            child: Text(
+                            child: const Text(
                               'Yes',
                               style: TextStyle(color: Colors.white),
                             ),

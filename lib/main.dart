@@ -32,9 +32,8 @@ class MyApp extends StatelessWidget {
           iconTheme: IconThemeData(color: Colors.black),
         ),
       ),
-      // Define routes
       routes: {
-        '/': (context) => const OnboardingScreen(), // Initial screen
+        '/': (context) => const OnboardingScreen(),
         '/sign-up': (context) => const SignUpScreen(),
         '/baby-registration': (context) => const BabyRegistrationScreen(),
         '/dashboard': (context) => const DashboardScreen(),
@@ -44,7 +43,7 @@ class MyApp extends StatelessWidget {
             (context) => ActivityScreen(
               activity:
                   ModalRoute.of(context)!.settings.arguments
-                      as YourActivityType,
+                      as Map<String, dynamic>,
             ),
         '/feedbackScreen':
             (context) => FeedbackScreen(

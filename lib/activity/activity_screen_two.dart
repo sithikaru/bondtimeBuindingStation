@@ -6,12 +6,13 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 class ActivityScreenTwo extends StatefulWidget {
   final int currentPage;
+  final Map<String, dynamic> activity;
 
   const ActivityScreenTwo({
     super.key,
     this.currentPage = 2,
-    required Map<String, dynamic> activity,
-  }); // Default to page 2
+    required this.activity,
+  });
 
   @override
   _ActivityScreenTwoState createState() => _ActivityScreenTwoState();
@@ -25,7 +26,7 @@ class _ActivityScreenTwoState extends State<ActivityScreenTwo> {
   double maxWidth = 344;
   String timerText = '0:10';
   bool isPaused = false;
-  bool isDone = false; // New flag to track if the timer is done
+  bool isDone = false;
 
   @override
   void initState() {
@@ -42,7 +43,7 @@ class _ActivityScreenTwoState extends State<ActivityScreenTwo> {
   void startTimer() {
     int totalTimeInSeconds = (minutes * 60) + seconds;
 
-    timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
         if (seconds > 0) {
           seconds--;
@@ -53,12 +54,16 @@ class _ActivityScreenTwoState extends State<ActivityScreenTwo> {
           } else {
             timer.cancel();
             timerText = "Done";
-            isDone = true; // Set the flag to true when done
+            isDone = true;
             progressWidth = maxWidth;
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => FeedbackScreen(activityId: "activity123"),
+                builder:
+                    (context) => FeedbackScreen(
+                      activityId:
+                          widget.activity['activityId'] ?? 'activity123',
+                    ),
               ),
             );
           }
@@ -75,7 +80,6 @@ class _ActivityScreenTwoState extends State<ActivityScreenTwo> {
   }
 
   void togglePauseResume() {
-    // Only allow pause/resume if the timer is not done
     if (!isDone) {
       setState(() {
         if (isPaused) {
@@ -103,19 +107,15 @@ class _ActivityScreenTwoState extends State<ActivityScreenTwo> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        leadingWidth: 30, // Reduced padding between back arrow and logo
+        leadingWidth: 30,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
-        title: SvgPicture.asset(
-          'assets/icons/bondtime_logo.svg', // Path to your SVG logo
-          height: 18, // Set height to 22px
-        ),
+        title: SvgPicture.asset('assets/icons/bondtime_logo.svg', height: 18),
         actions: [
-          // Notifications Icon - Same as ActivityScreen
           IconButton(
             icon: SvgPicture.asset(
               'assets/icons/notifications.svg',
@@ -125,11 +125,8 @@ class _ActivityScreenTwoState extends State<ActivityScreenTwo> {
             ),
             onPressed: () {},
           ),
-          // Settings Icon - Same as ActivityScreen
           Padding(
-            padding: const EdgeInsets.only(
-              right: 10.0,
-            ), // Same padding as ActivityScreen
+            padding: const EdgeInsets.only(right: 10.0),
             child: IconButton(
               icon: SvgPicture.asset(
                 'assets/icons/settings.svg',
@@ -146,25 +143,27 @@ class _ActivityScreenTwoState extends State<ActivityScreenTwo> {
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(
           children: [
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             SvgPicture.asset(
               'assets/icons/engagement.svg',
               height: 261,
               width: 196,
             ),
-            SizedBox(height: 35),
+            const SizedBox(height: 35),
             Text(
-              'Spend 10 minutes engaging with your child',
-              style: TextStyle(
+              widget.activity['title'] ??
+                  'Spend 10 minutes engaging with your child',
+              style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
                 color: Colors.black,
               ),
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: 30),
+            const SizedBox(height: 30),
             Text(
-              'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.',
+              widget.activity['description'] ??
+                  'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w400,
@@ -173,9 +172,7 @@ class _ActivityScreenTwoState extends State<ActivityScreenTwo> {
               ),
               textAlign: TextAlign.center,
             ),
-            Spacer(),
-
-            // Audio Guidance Button
+            const Spacer(),
             SizedBox(
               width: 344,
               height: 58,
@@ -184,7 +181,9 @@ class _ActivityScreenTwoState extends State<ActivityScreenTwo> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => VoiceAssistanceScreen(),
+                      builder:
+                          (context) =>
+                              VoiceAssistanceScreen(activity: widget.activity),
                     ),
                   );
                 },
@@ -194,17 +193,15 @@ class _ActivityScreenTwoState extends State<ActivityScreenTwo> {
                     borderRadius: BorderRadius.circular(15),
                   ),
                 ),
-                child: Text(
+                child: const Text(
                   'Audio Guidance',
                   style: TextStyle(fontSize: 18, color: Colors.white),
                 ),
               ),
             ),
-            SizedBox(height: 15),
-
-            // Timer Button with Animated Progress Bar
+            const SizedBox(height: 15),
             GestureDetector(
-              onTap: togglePauseResume, // Toggle pause and resume on tap
+              onTap: togglePauseResume,
               child: Container(
                 width: maxWidth,
                 height: 58,
@@ -215,7 +212,7 @@ class _ActivityScreenTwoState extends State<ActivityScreenTwo> {
                     BoxShadow(
                       color: Colors.black.withOpacity(0.2),
                       blurRadius: 20,
-                      offset: Offset(0, 10),
+                      offset: const Offset(0, 10),
                     ),
                   ],
                 ),
@@ -230,7 +227,7 @@ class _ActivityScreenTwoState extends State<ActivityScreenTwo> {
                       ),
                     ),
                     AnimatedContainer(
-                      duration: Duration(seconds: 1),
+                      duration: const Duration(seconds: 1),
                       width: progressWidth,
                       height: 58,
                       decoration: BoxDecoration(
@@ -241,7 +238,7 @@ class _ActivityScreenTwoState extends State<ActivityScreenTwo> {
                     Center(
                       child: Text(
                         timerText,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 18,
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
@@ -252,12 +249,9 @@ class _ActivityScreenTwoState extends State<ActivityScreenTwo> {
                 ),
               ),
             ),
-
-            SizedBox(height: 30),
-
-            // Page Indicator
+            const SizedBox(height: 30),
             Container(
-              margin: EdgeInsets.only(top: 20),
+              margin: const EdgeInsets.only(top: 20),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -274,7 +268,7 @@ class _ActivityScreenTwoState extends State<ActivityScreenTwo> {
                       ),
                     ),
                   ),
-                  SizedBox(width: 5),
+                  const SizedBox(width: 5),
                   Container(
                     width: widget.currentPage == 2 ? 20 : 10,
                     height: 10,
@@ -291,7 +285,7 @@ class _ActivityScreenTwoState extends State<ActivityScreenTwo> {
                 ],
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
           ],
         ),
       ),

@@ -294,9 +294,7 @@ class _BabyRegistrationScreenState extends State<BabyRegistrationScreen> {
                       firstDate: DateTime(2000),
                       lastDate: DateTime.now(),
                     );
-                    if (pickedDate != null) {
-                      _onDateSelected(pickedDate);
-                    }
+                    _onDateSelected(pickedDate!);
                   }
                   : null,
           decoration: _inputDecoration(hint, suffix, isDisabled),

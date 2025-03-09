@@ -1,10 +1,10 @@
-import 'package:bondtime/activity/activity_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:bondtime/activity/activity_screen.dart';
 
 class ActivityCard extends StatelessWidget {
   final String day;
-  final Map<String, dynamic> activity; // Changed to Map for full activity data
+  final Map<String, dynamic> activity;
   final String icon;
   final int currentPage;
   final int index;
@@ -13,7 +13,7 @@ class ActivityCard extends StatelessWidget {
   ActivityCard({
     super.key,
     required this.day,
-    required this.activity, // Now expects a Map
+    required this.activity,
     required this.icon,
     required this.currentPage,
     required this.index,
@@ -21,19 +21,10 @@ class ActivityCard extends StatelessWidget {
   });
 
   final List<Map<String, Color>> cardColors = [
-    {
-      "fill": const Color(0xFFDCE6FF),
-      "stroke": const Color(0xFF5283FF),
-    }, // Blue
-    {
-      "fill": const Color(0xFFE9FFEB),
-      "stroke": const Color(0xFF60D46B),
-    }, // Green
-    {
-      "fill": const Color(0xFFFFF2CF),
-      "stroke": const Color(0xFFF6CE61),
-    }, // Yellow
-    {"fill": const Color(0xFFFFEAEA), "stroke": const Color(0xFFEB9595)}, // Red
+    {"fill": const Color(0xFFDCE6FF), "stroke": const Color(0xFF5283FF)},
+    {"fill": const Color(0xFFE9FFEB), "stroke": const Color(0xFF60D46B)},
+    {"fill": const Color(0xFFFFF2CF), "stroke": const Color(0xFFF6CE61)},
+    {"fill": const Color(0xFFFFEAEA), "stroke": const Color(0xFFEB9595)},
   ];
 
   @override
@@ -52,7 +43,6 @@ class ActivityCard extends StatelessWidget {
       ),
       child: Stack(
         children: [
-          // Day Title
           Positioned(
             top: 0,
             left: 0,
@@ -61,7 +51,6 @@ class ActivityCard extends StatelessWidget {
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
           ),
-          // Description with max width
           Positioned(
             top: 30,
             left: 0,
@@ -77,7 +66,6 @@ class ActivityCard extends StatelessWidget {
               ),
             ),
           ),
-          // Play Button (Bottom Left)
           Positioned(
             bottom: 0,
             left: 0,
@@ -97,13 +85,11 @@ class ActivityCard extends StatelessWidget {
               ),
             ),
           ),
-          // Activity Image (Bottom Right)
           Positioned(
             bottom: 0,
             right: 0,
             child: SvgPicture.asset(icon, width: 98, height: 131),
           ),
-          // Page Indicators
           Positioned(
             bottom: 10,
             left: 0,
