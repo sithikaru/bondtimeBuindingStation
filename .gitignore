@@ -68,9 +68,11 @@ node_modules/
 # dataconnect generated files
 .dataconnect
 
-build/
+# Flutter build directory
+/build/
 .dart_tool/
-.flutter-plugins
-
+android/app/debug.keystore
 *.apk
+*.aab
+*.bin
 *.dill
