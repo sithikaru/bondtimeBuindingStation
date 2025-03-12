@@ -18,12 +18,12 @@ class _VoiceAssistanceScreenState extends State<VoiceAssistanceScreen> {
   bool hasCompleted = false;
   bool showPopup = false;
 
-  String guidanceText =
-      "Let’s have fun building a tower together! Get ready with some colorful blocks. Don’t worry if they are of different shapes or sizes";
+  late String guidanceText;
 
   @override
   void initState() {
     super.initState();
+    guidanceText = widget.activity['description'] ?? '';
     flutterTts.setCompletionHandler(() {
       setState(() {
         isPlaying = false;
@@ -43,7 +43,7 @@ class _VoiceAssistanceScreenState extends State<VoiceAssistanceScreen> {
       await flutterTts.setLanguage("en-US");
       await flutterTts.setSpeechRate(0.5);
       await flutterTts.setPitch(1.0);
-      await flutterTts.speak(guidanceText);
+      await flutterTts.speak(widget.activity['description']);
       setState(() {
         isPlaying = true;
         hasCompleted = false;

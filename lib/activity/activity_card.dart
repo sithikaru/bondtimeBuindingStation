@@ -29,8 +29,12 @@ class ActivityCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final fillColor = cardColors[index]["fill"] ?? const Color(0xFFDCE6FF);
-    final strokeColor = cardColors[index]["stroke"] ?? const Color(0xFF5283FF);
+    final fillColor =
+        cardColors[index % cardColors.length]["fill"] ??
+        const Color(0xFFDCE6FF);
+    final strokeColor =
+        cardColors[index % cardColors.length]["stroke"] ??
+        const Color(0xFF5283FF);
 
     return Container(
       width: 380,
@@ -57,7 +61,7 @@ class ActivityCard extends StatelessWidget {
             child: SizedBox(
               width: 250,
               child: Text(
-                activity['description'] ?? 'No description',
+                activity['description'] ?? 'No description available',
                 style: const TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w500,

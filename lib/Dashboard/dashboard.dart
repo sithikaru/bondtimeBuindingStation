@@ -49,13 +49,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
               .doc(userId)
               .get();
 
-      // Cast userDoc.data() to Map<String, dynamic>
       Map<String, dynamic>? userData = userDoc.data() as Map<String, dynamic>?;
       Map<String, dynamic>? childData = userData?["child"];
 
       if (childData == null || !childData.containsKey("dob")) {
         setState(() {
           errorMessage = 'Please complete your child\'s profile';
+          isLoading = false;
         });
         return;
       }
@@ -79,24 +79,29 @@ class _DashboardScreenState extends State<DashboardScreen> {
         age--;
       }
 
-      // Call API with only userId
       var result = await ApiService.getActivities(userId);
       print("API Response: $result"); // Debug log
 
       if (result == null || !result.containsKey("activities")) {
-        throw Exception("Invalid API response: Missing 'activities' key");
+        throw Exception(
+          "Invalid API response: Missing 'activities' key or null response",
+        );
       }
 
-      // Convert the activities map into a list
       List<Map<String, dynamic>> fetchedActivities = [];
-      Map<String, dynamic> activitiesMap = result["activities"];
-      activitiesMap.forEach((category, activity) {
-        fetchedActivities.add({
-          "category": category,
-          "title": activity["title"],
-          "description": activity["description"],
-          "activityId": activity["activityId"],
-        });
+      Map<String, dynamic> activitiesMap =
+          result["activities"]["activities"] ?? {};
+      activitiesMap.forEach((key, value) {
+        if (value is Map<String, dynamic> && key != "activityId") {
+          fetchedActivities.add({
+            "category": value["category"],
+            "title": value["title"],
+            "description": value["description"],
+            "activityId":
+                value["activityId"] ??
+                "${userId}_${DateTime.now().toIso8601String().split('T')[0]}_${value['category']}",
+          });
+        }
       });
 
       setState(() {
@@ -104,20 +109,34 @@ class _DashboardScreenState extends State<DashboardScreen> {
         if (activities.isEmpty) {
           errorMessage = 'No activities available today';
         }
+        isLoading = false;
       });
     } catch (e) {
-      print("Error fetching activities: $e");
+      print("Error fetching activities: $e"); // Debug log
       setState(() {
         errorMessage =
             e is FormatException
                 ? 'Invalid child DOB format: ${e.message}'
-                : 'Failed to load activities. Check your connection or try again later.';
-      });
-    } finally {
-      setState(() {
+                : e.toString().contains('Timeout') ||
+                    e.toString().contains('Network')
+                ? 'Failed to load activities. Check your connection or try again later.'
+                : 'Unexpected error: $e';
         isLoading = false;
       });
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
     }
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    _tipsPageController.dispose();
+    super.dispose();
   }
 
   @override
@@ -176,10 +195,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                // Progress Bar Widget
                 ProgressBar(rewardStars: rewardStars),
                 const SizedBox(height: 20),
-                // Slidable Activity Cards
                 SizedBox(
                   height: 175,
                   child:
@@ -246,7 +263,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           ),
                 ),
                 const SizedBox(height: 20),
-                // Slidable Daily Tips Card
                 SizedBox(
                   height: 175,
                   child: PageView.builder(
@@ -277,7 +293,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                // Daily Time Chart
                 DailyTimeChart(
                   timeSpent: [1.5, 1.0, 1.7, 1.2, 0.8, 1.9, 0.5],
                   selectedDayIndex: selectedDayIndex,
