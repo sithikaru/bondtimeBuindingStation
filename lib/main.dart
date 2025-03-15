@@ -5,6 +5,7 @@ import 'package:bondtime/signin/forgot_password_screen.dart';
 import 'package:bondtime/signin/sign_in_screen.dart';
 import 'package:bondtime/signup/baby_registration_screen.dart';
 import 'package:bondtime/signup/onboarding_screen.dart';
+import 'package:bondtime/signup/role_selection_page.dart';
 import 'package:bondtime/signup/sign_up_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -39,6 +40,7 @@ class MyApp extends StatelessWidget {
         '/dashboard': (context) => const DashboardScreen(),
         '/sign-in': (context) => const SignInScreen(),
         '/forgotPassword': (context) => const ForgotPasswordScreen(),
+        '/role_selection': (context) => RoleSelectionPage(),
         '/activityScreen':
             (context) => ActivityScreen(
               activity:

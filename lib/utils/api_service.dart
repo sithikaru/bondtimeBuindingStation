@@ -7,6 +7,7 @@ class ApiService {
   // Use 10.0.2.2 for Android emulator to reach the host machine
   static const String baseUrl = "http://10.0.2.2:8000"; // Updated for emulator
 
+  // Fetch activities based on the user's ID and today's date
   static Future<Map<String, dynamic>> getActivities(String userId) async {
     final url = Uri.parse("$baseUrl/get-activities");
     print("Sending request to: $url with userId: $userId"); // Debug log
@@ -39,6 +40,7 @@ class ApiService {
     }
   }
 
+  // Submit user feedback to the server
   static Future<String> submitFeedback(
     String userId,
     String activityId,

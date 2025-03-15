@@ -1,10 +1,10 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'package:bondtime/Dashboard/dashboard.dart';
+import 'package:bondtime/feedback/thank_you_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../utils/api_service.dart';
-import '../widgets/feedback_card.dart';
+import 'feedback_card.dart';
 
 class FeedbackScreen extends StatefulWidget {
   final String activityId;
@@ -22,9 +22,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
       if (user == null) {
         throw Exception("User not logged in");
       }
-
       String userId = user.uid;
-
       await ApiService.submitFeedback(
         userId,
         widget.activityId,
@@ -32,9 +30,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
         comment,
       );
     } catch (e) {
-      // Remove print in production; consider using a logger if needed
-      // print("Error saving feedback: $e");
-      rethrow; // Use rethrow to preserve stack trace
+      rethrow;
     }
   }
 
@@ -48,35 +44,32 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      // body: Center(
-      //   child: FeedbackCard(
-      //     question: "How did this activity go with your child?",
-      //     onNext: (int rating, String comment) async {
-      //       // Store context reference before async operation
-      //       final BuildContext currentContext = context;
-      //       try {
-      //         await saveFeedback(rating, comment);
-      //         if (mounted) {
-      //           // Check if widget is still mounted
-      //           Navigator.push(
-      //             currentContext,
-      //             MaterialPageRoute(
-      //               builder: (context) => const DashboardScreen(),
-      //             ),
-      //           );
-      //         }
-      //       } catch (e) {
-      //         if (mounted) {
-      //           // Check if widget is still mounted
-      //           ScaffoldMessenger.of(currentContext).showSnackBar(
-      //             SnackBar(content: Text("Failed to submit feedback: $e")),
-      //           );
-      //         }
-      //       }
-      //     },
-      //     isLast: false,
-      //   ),
-      // ),
+      body: Center(
+        child: FeedbackCard(
+          question: "How did this activity go with your child?",
+          onNext: (int rating, String comment) async {
+            final BuildContext currentContext = context;
+            try {
+              await saveFeedback(rating, comment);
+              if (mounted) {
+                Navigator.push(
+                  currentContext,
+                  MaterialPageRoute(
+                    builder: (context) => const ThankYouScreen(),
+                  ),
+                );
+              }
+            } catch (e) {
+              if (mounted) {
+                ScaffoldMessenger.of(currentContext).showSnackBar(
+                  SnackBar(content: Text("Failed to submit feedback: $e")),
+                );
+              }
+            }
+          },
+          isLast: true, // Single feedback question per activity
+        ),
+      ),
     );
   }
 }
