@@ -9,6 +9,7 @@ class TipsCard extends StatelessWidget {
   final int currentPage;
   final int index;
   final int totalPages;
+  final VoidCallback onDone; // New callback parameter
 
   const TipsCard({
     super.key,
@@ -19,6 +20,7 @@ class TipsCard extends StatelessWidget {
     required this.currentPage,
     required this.index,
     required this.totalPages,
+    required this.onDone, // Marked as required
   });
 
   @override
@@ -30,10 +32,7 @@ class TipsCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Color(0xFFFDE8FF), // ✅ Fill Color
         borderRadius: BorderRadius.circular(15),
-        border: Border.all(
-          color: Color(0xFFBC7BC2),
-          width: 1,
-        ), // ✅ Stroke Color
+        border: Border.all(color: Color(0xFFBC7BC2), width: 1),
       ),
       child: Stack(
         children: [
@@ -53,28 +52,21 @@ class TipsCard extends StatelessWidget {
               child: Text(description, style: TextStyle(fontSize: 14)),
             ),
           ),
-
-          // ✅ **Updated Button with Increased Width**
+          // Updated button that triggers the onDone callback
           Positioned(
             bottom: 0,
             left: 0,
             child: SizedBox(
-              width: 100, // ✅ **Increased button width**
+              width: 100,
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: onDone,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(
-                    0xFF111111,
-                  ), // ✅ Button background color
-                  foregroundColor: Color(0xFFFDFDFD), // ✅ Text color
+                  backgroundColor: Color(0xFF111111),
+                  foregroundColor: Color(0xFFFDFDFD),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(
-                      10,
-                    ), // ✅ Border radius 10px
+                    borderRadius: BorderRadius.circular(10),
                   ),
-                  padding: EdgeInsets.symmetric(
-                    vertical: 12,
-                  ), // ✅ Keep vertical padding
+                  padding: EdgeInsets.symmetric(vertical: 12),
                 ),
                 child: Text(
                   buttonText,
@@ -83,14 +75,12 @@ class TipsCard extends StatelessWidget {
               ),
             ),
           ),
-
           Positioned(
             bottom: 0,
             right: 0,
             child: SvgPicture.asset(icon, width: 98, height: 131),
           ),
-
-          // ✅ **Page Indicator**
+          // Page Indicator
           Positioned(
             bottom: 10,
             left: 0,

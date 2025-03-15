@@ -85,4 +85,36 @@ class ApiService {
       throw Exception("Failed to submit feedback: $e");
     }
   }
+
+  static Future<List<String>> getDailyTips(String role) async {
+    final url = Uri.parse("$baseUrl/get-daily-tips");
+    print("Sending request to: $url with role: $role"); // Debug log
+    try {
+      final response = await http
+          .post(
+            url,
+            headers: {"Content-Type": "application/json"},
+            body: jsonEncode({"role": role}),
+          )
+          .timeout(const Duration(seconds: 10));
+
+      print("Response status: ${response.statusCode}");
+      print("Response body: ${response.body}");
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return List<String>.from(data["tips"]);
+      } else {
+        throw Exception(
+          "Failed to fetch tips: ${response.statusCode} - ${response.body}",
+        );
+      }
+    } on TimeoutException {
+      throw Exception("Request timed out. Check server connection.");
+    } on SocketException {
+      throw Exception("Network error. Check your connection.");
+    } catch (e) {
+      throw Exception("Unexpected error: $e");
+    }
+  }
 }
