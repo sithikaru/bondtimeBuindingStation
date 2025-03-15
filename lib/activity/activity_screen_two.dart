@@ -19,18 +19,23 @@ class ActivityScreenTwo extends StatefulWidget {
 }
 
 class _ActivityScreenTwoState extends State<ActivityScreenTwo> {
-  int minutes = 0;
-  int seconds = 10;
+  late int minutes;
+  int seconds =
+      0; // Start with 0 seconds since we'll set minutes from recommendedDuration
   Timer? timer;
   double progressWidth = 0.0;
   double maxWidth = 344;
-  String timerText = '0:10';
+  String timerText = '';
   bool isPaused = false;
   bool isDone = false;
 
   @override
   void initState() {
     super.initState();
+    // Initialize minutes using the recommendedDuration from activity.
+    // Fallback to 10 if recommendedDuration is not provided.
+    minutes = widget.activity["recommendedDuration"] ?? 10;
+    timerText = getFormattedTime();
     startTimer();
   }
 
@@ -152,7 +157,7 @@ class _ActivityScreenTwoState extends State<ActivityScreenTwo> {
             const SizedBox(height: 35),
             Text(
               widget.activity['title'] ??
-                  'Spend 10 minutes engaging with your child',
+                  'Engage with your child for ${widget.activity["recommendedDuration"] ?? 10} minutes',
               style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
@@ -163,7 +168,7 @@ class _ActivityScreenTwoState extends State<ActivityScreenTwo> {
             const SizedBox(height: 30),
             Text(
               widget.activity['description'] ??
-                  'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                  'Follow the activity instructions for the recommended duration.',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w400,

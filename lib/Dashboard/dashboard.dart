@@ -37,6 +37,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
   String userDisplayRole = "";
   // Stores the SVG icon path based on user's role
   String roleIcon = "";
+  // Stores the user's first name
+  String userFirstName = "";
 
   @override
   void initState() {
@@ -62,7 +64,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         );
       }
 
-      // Convert the activities map to a list
+      // Convert the activities map to a list (including recommendedDuration)
       Map<String, dynamic> activitiesMap = result["activities"] ?? {};
       List<Map<String, dynamic>> fetchedActivities =
           activitiesMap.entries.map((entry) {
@@ -72,6 +74,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               "description":
                   entry.value["description"] ?? "No description available",
               "activityId": entry.value["activityId"],
+              "recommendedDuration": entry.value["recommendedDuration"] ?? 10,
             };
           }).toList();
 
@@ -101,7 +104,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     });
 
     try {
-      // Fetch the logged-in user's role from Firestore
+      // Fetch the logged-in user's document from Firestore
       String userId = FirebaseAuth.instance.currentUser!.uid;
       DocumentSnapshot userDoc =
           await FirebaseFirestore.instance
@@ -113,7 +116,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
         throw Exception("User role not found.");
       }
 
+      // Retrieve user's role and firstName from Firestore
       String userRole = userDoc.get("role");
+      String firstName = userDoc.get("firstName");
       print("Fetched user role: $userRole");
 
       // Map the user role to display text and SVG icon
@@ -139,6 +144,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       setState(() {
         userDisplayRole = displayRole;
         roleIcon = iconPath;
+        userFirstName = firstName;
       });
 
       // Call the backend to get daily tips based on the user's role
@@ -169,6 +175,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Use userFirstName instead of a fallback "User"
     return Scaffold(
       backgroundColor: const Color(0xFFFDFDFD),
       appBar: AppBar(
@@ -214,9 +221,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 0),
-                const Text(
-                  "Good Evening, Juan",
-                  style: TextStyle(
+                Text(
+                  "Good Evening, $userFirstName",
+                  style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w600,
                     fontFamily: 'InterTight',
