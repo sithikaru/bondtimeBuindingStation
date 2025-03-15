@@ -102,19 +102,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
             password: _passwordController.text.trim(),
           );
 
-      // 2. Save additional user data to Firestore
+      // 2. Save additional user data to Firestore without role
       await _firestore.collection('users').doc(userCredential.user?.uid).set({
         'firstName': _firstNameController.text.trim(),
         'lastName': _lastNameController.text.trim(),
         'email': _emailController.text.trim(),
-        'role': 'Mother', // Default role, can be updated later
         'child': {}, // Empty child object for now
       });
 
-      // 3. Navigate to baby registration screen
-      Navigator.pushNamed(context, '/baby-registration');
+      // 3. Navigate to role selection screen
+      Navigator.pushNamed(context, '/role_selection');
     } on FirebaseAuthException catch (e) {
-      // Handle specific errors
       String errorMessage;
       switch (e.code) {
         case 'email-already-in-use':
@@ -130,7 +128,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
         context,
       ).showSnackBar(SnackBar(content: Text(errorMessage)));
     } catch (e) {
-      // Handle other errors
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text("An unexpected error occurred.")));

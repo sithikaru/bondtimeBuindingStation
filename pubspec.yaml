@@ -108,7 +108,36 @@ flutter:
     - assets/images/apple.svg
     - assets/images/google.svg
     - assets/images/facebook.svg
-    - assets/icons/
+    - assets/images/father.svg
+    - assets/images/mother.svg
+    - assets/images/grand.svg
+    - assets/images/caregiver.svg
+    - assets/icons/activities_selected.svg
+    - assets/icons/activities.svg
+    - assets/icons/activity1.svg
+    - assets/icons/BondTime_logo.svg
+    - assets/icons/bondy_selected.svg
+    - assets/icons/bondy.svg
+    - assets/icons/dashboard_selected.svg
+    - assets/icons/dashboard.svg
+    - assets/icons/engagement.svg
+    - assets/icons/next.svg
+    - assets/icons/notifications.svg
+    - assets/icons/pause.svg
+    - assets/icons/pediatricians_selected.svg
+    - assets/icons/pediatricians.svg
+    - assets/icons/play.svg
+    - assets/icons/playicon.svg
+    - assets/icons/previous.svg
+    - assets/icons/profile_selected.svg
+    - assets/icons/profile.svg
+    - assets/icons/replay.svg
+    - assets/icons/settings.svg
+    - assets/icons/star_icon.svg
+    - assets/icons/streaks_icon.svg
+    - assets/icons/tick.svg
+    - assets/icons/tips1.svg
+    - assets/icons/voice_assistance.svg
 
   # Add custom fonts
   fonts:

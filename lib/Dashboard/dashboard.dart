@@ -43,42 +43,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
     try {
       String userId = FirebaseAuth.instance.currentUser!.uid;
-      DocumentSnapshot userDoc =
-          await FirebaseFirestore.instance
-              .collection("users")
-              .doc(userId)
-              .get();
-
-      Map<String, dynamic>? userData = userDoc.data() as Map<String, dynamic>?;
-      Map<String, dynamic>? childData = userData?["child"];
-
-      if (childData == null || !childData.containsKey("dob")) {
-        setState(() {
-          errorMessage = 'Please complete your child\'s profile';
-          isLoading = false;
-        });
-        return;
-      }
-
-      String dobStr = childData["dob"];
-      List<String> parts = dobStr.split("/");
-      if (parts.length != 3) {
-        throw FormatException(
-          "Invalid DOB format: $dobStr. Expected format: dd/mm/yyyy",
-        );
-      }
-
-      int day = int.parse(parts[0]);
-      int month = int.parse(parts[1]);
-      int year = int.parse(parts[2]);
-      DateTime dob = DateTime(year, month, day);
-      DateTime now = DateTime.now();
-      int age = now.year - dob.year;
-      if (now.month < dob.month ||
-          (now.month == dob.month && now.day < dob.day)) {
-        age--;
-      }
-
       var result = await ApiService.getActivities(userId);
       print("API Response: $result"); // Debug log
 
@@ -88,21 +52,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
         );
       }
 
-      List<Map<String, dynamic>> fetchedActivities = [];
-      Map<String, dynamic> activitiesMap =
-          result["activities"]["activities"] ?? {};
-      activitiesMap.forEach((key, value) {
-        if (value is Map<String, dynamic> && key != "activityId") {
-          fetchedActivities.add({
-            "category": value["category"],
-            "title": value["title"],
-            "description": value["description"],
-            "activityId":
-                value["activityId"] ??
-                "${userId}_${DateTime.now().toIso8601String().split('T')[0]}_${value['category']}",
-          });
-        }
-      });
+      // Convert activities map to list
+      Map<String, dynamic> activitiesMap = result["activities"] ?? {};
+      List<Map<String, dynamic>> fetchedActivities =
+          activitiesMap.entries.map((entry) {
+            return {
+              "category": entry.value["category"] ?? "unknown",
+              "title": entry.value["title"] ?? "No Title",
+              "description":
+                  entry.value["description"] ?? "No description available",
+              "activityId": entry.value["activityId"],
+            };
+          }).toList();
 
       setState(() {
         activities = fetchedActivities;
@@ -115,10 +76,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       print("Error fetching activities: $e"); // Debug log
       setState(() {
         errorMessage =
-            e is FormatException
-                ? 'Invalid child DOB format: ${e.message}'
-                : e.toString().contains('Timeout') ||
-                    e.toString().contains('Network')
+            e.toString().contains('Timeout') || e.toString().contains('Network')
                 ? 'Failed to load activities. Check your connection or try again later.'
                 : 'Unexpected error: $e';
         isLoading = false;
@@ -251,7 +209,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                   );
                                 },
                                 child: ActivityCard(
-                                  day: "Today's Activity",
                                   activity: activities[index],
                                   icon: icon,
                                   currentPage: currentPage,

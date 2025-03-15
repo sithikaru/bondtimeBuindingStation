@@ -1,3 +1,4 @@
+import 'package:bondtime/Dashboard/dashboard.dart';
 import 'package:flutter/material.dart';
 import '../styles/app_styles.dart'; // Ensure this file exists
 
@@ -30,25 +31,27 @@ class ThankYouScreen extends StatelessWidget {
             children: [
               Text(
                 "Thank You for Your Feedback!",
-                style: AppStyles.headline, // Fixed reference
+                style: AppStyles.headline,
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 15),
-              const Icon(
-                Icons.favorite,
-                color: Colors.red,
-                size: 40,
-              ),
+              const Icon(Icons.favorite, color: Colors.red, size: 40),
               const SizedBox(height: 15),
               Text(
                 "Your insights help us tailor activities that better suit your child’s needs. We’re grateful for your support in their growth journey!",
-                style: AppStyles.bodyText, // Fixed reference
+                style: AppStyles.bodyText,
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 30),
               ElevatedButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, '/next_activity');
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const DashboardScreen(),
+                    ),
+                    (route) => false, // Removes all previous routes
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.black,
@@ -58,22 +61,7 @@ class ThankYouScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-                child: Text("Next Activity", style: AppStyles.buttonText),
-              ),
-              const SizedBox(height: 15),
-              OutlinedButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                style: OutlinedButton.styleFrom(
-                  side: const BorderSide(color: Colors.black, width: 2),
-                  foregroundColor: Colors.black,
-                  minimumSize: const Size(double.infinity, 50),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                child: Text("Close", style: AppStyles.buttonText),
+                child: Text("Back to Activities", style: AppStyles.buttonText),
               ),
             ],
           ),

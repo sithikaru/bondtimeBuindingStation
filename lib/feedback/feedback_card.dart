@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class FeedbackCard extends StatefulWidget {
   final String question;
-  final Future<void> Function(int, String) onNext;
+  final Future<void> Function(int, String) onNext; // Correct type
   final bool isLast;
 
   const FeedbackCard({

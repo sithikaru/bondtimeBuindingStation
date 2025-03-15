@@ -3,7 +3,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:bondtime/activity/activity_screen.dart';
 
 class ActivityCard extends StatelessWidget {
-  final String day;
   final Map<String, dynamic> activity;
   final String icon;
   final int currentPage;
@@ -12,7 +11,6 @@ class ActivityCard extends StatelessWidget {
 
   ActivityCard({
     super.key,
-    required this.day,
     required this.activity,
     required this.icon,
     required this.currentPage,
@@ -51,7 +49,7 @@ class ActivityCard extends StatelessWidget {
             top: 0,
             left: 0,
             child: Text(
-              day,
+              activity['title'] ?? "Today's Activity",
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
           ),
@@ -60,6 +58,7 @@ class ActivityCard extends StatelessWidget {
             left: 0,
             child: SizedBox(
               width: 250,
+              height: 60,
               child: Text(
                 activity['description'] ?? 'No description available',
                 style: const TextStyle(
