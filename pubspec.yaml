@@ -149,6 +149,7 @@ flutter:
     - assets/icons/tick.svg
     - assets/icons/tips1.svg
     - assets/icons/voice_assistance.svg
+    - assets/icons/warning.svg
 
   # Add custom fonts
   fonts:

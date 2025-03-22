@@ -146,35 +146,6 @@ class _VoiceAssistanceScreenState extends State<VoiceAssistanceScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Column(
-                          children: [
-                            Container(
-                              width: 60,
-                              height: 60,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: Colors.black,
-                                  width: 2,
-                                ),
-                              ),
-                              child: const Icon(
-                                Icons.skip_previous,
-                                color: Colors.black,
-                                size: 30,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            const Text(
-                              'Previous step',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(width: 40),
                         Container(
                           width: 90,
                           height: 90,
@@ -201,35 +172,6 @@ class _VoiceAssistanceScreenState extends State<VoiceAssistanceScreen> {
                             ),
                             onPressed: togglePlayPause,
                           ),
-                        ),
-                        const SizedBox(width: 40),
-                        Column(
-                          children: [
-                            Container(
-                              width: 60,
-                              height: 60,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: Colors.black,
-                                  width: 2,
-                                ),
-                              ),
-                              child: const Icon(
-                                Icons.skip_next,
-                                color: Colors.black,
-                                size: 30,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            const Text(
-                              'Next step',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ],
                         ),
                       ],
                     ),
