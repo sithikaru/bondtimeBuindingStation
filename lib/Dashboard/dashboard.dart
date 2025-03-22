@@ -23,6 +23,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   int tipsCurrentPage = 0;
   int selectedDayIndex = 3; // Default selected day for time chart
   int completedToday = 0;
+  int streakCount = 0;
 
   int rewardStars = 10;
 
@@ -47,6 +48,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     _fetchActivities();
     _fetchDailyTips();
     _fetchCompletedActivities();
+    _fetchStreak();
   }
 
   Future<void> _fetchActivities() async {
@@ -95,6 +97,30 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ? 'Failed to load activities. Check your connection or try again later.'
                 : 'Unexpected error: $e';
         isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _fetchStreak() async {
+    try {
+      String userId = FirebaseAuth.instance.currentUser!.uid;
+      final doc =
+          await FirebaseFirestore.instance
+              .collection("users")
+              .doc(userId)
+              .collection("progress")
+              .doc("streak")
+              .get();
+
+      if (doc.exists) {
+        setState(() {
+          streakCount = doc.data()?['currentStreak'] ?? 0;
+        });
+      }
+    } catch (e) {
+      print("Error fetching streak: $e");
+      setState(() {
+        streakCount = 0;
       });
     }
   }
@@ -223,7 +249,45 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ),
             onPressed: () {},
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: 3),
+          SizedBox(width: 3),
+          Padding(
+            padding: const EdgeInsets.only(right: 16.0),
+            child: GestureDetector(
+              onTap: () {
+                Navigator.pushNamed(context, '/rewardsScreen');
+              },
+              child: Container(
+                constraints: BoxConstraints(minWidth: 46, minHeight: 28),
+                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Color(0xFFFED7D7),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      "$streakCount",
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+
+                    SizedBox(width: 3),
+                    SvgPicture.asset(
+                      'assets/icons/streaks_icon.svg',
+                      height: 18,
+                      width: 18,
+                      color: Colors.red,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+
           IconButton(
             icon: SvgPicture.asset(
               'assets/icons/settings.svg',

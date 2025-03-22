@@ -136,6 +136,7 @@ flutter:
     - assets/icons/settings.svg
     - assets/icons/star_icon.svg
     - assets/icons/streaks_icon.svg
+    - assets/icons/reward_icon.svg
     - assets/icons/tick.svg
     - assets/icons/tips1.svg
     - assets/icons/voice_assistance.svg

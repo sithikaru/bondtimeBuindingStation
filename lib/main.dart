@@ -2,6 +2,7 @@ import 'package:bondtime/Dashboard/dashboard.dart';
 import 'package:bondtime/Settings/settings_page.dart';
 import 'package:bondtime/activity/activity_screen.dart';
 import 'package:bondtime/feedback/feedback_screen.dart';
+import 'package:bondtime/rewardScreen/rewards_screen.dart';
 import 'package:bondtime/signin/forgot_password_screen.dart';
 import 'package:bondtime/signin/sign_in_screen.dart';
 import 'package:bondtime/signup/baby_registration_screen.dart';
@@ -54,6 +55,7 @@ class MyApp extends StatelessWidget {
               activityId: ModalRoute.of(context)!.settings.arguments as String,
               durationSpent: 0,
             ),
+        '/rewardsScreen': (context) => RewardsScreen(),
       },
     );
   }
