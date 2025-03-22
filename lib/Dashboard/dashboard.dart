@@ -161,8 +161,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
       } else if (userRole == "Grand Parent") {
         displayRole = "Grand Parent";
         iconPath = "assets/images/grand.svg";
-      } else if (userRole == "Caregiver") {
-        displayRole = "Caregiver";
+      } else if (userRole == "Care Giver") {
+        displayRole = "Care Giver";
         iconPath = "assets/images/caregiver.svg";
       } else {
         displayRole = userRole;
@@ -249,6 +249,22 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ),
             onPressed: () {},
           ),
+          IconButton(
+            icon: SvgPicture.asset(
+              'assets/icons/settings.svg',
+              height: 24,
+              width: 24,
+              colorFilter: const ColorFilter.mode(
+                Colors.black,
+                BlendMode.srcIn,
+              ),
+            ),
+            onPressed: () {
+              Navigator.pushNamed(context, '/settings');
+            },
+          ),
+          const SizedBox(width: 3),
+
           const SizedBox(width: 3),
           SizedBox(width: 3),
           Padding(
@@ -287,22 +303,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
             ),
           ),
-
-          IconButton(
-            icon: SvgPicture.asset(
-              'assets/icons/settings.svg',
-              height: 24,
-              width: 24,
-              colorFilter: const ColorFilter.mode(
-                Colors.black,
-                BlendMode.srcIn,
-              ),
-            ),
-            onPressed: () {
-              Navigator.pushNamed(context, '/settings');
-            },
-          ),
-          const SizedBox(width: 3),
         ],
       ),
       bottomNavigationBar: BottomNavBar(),

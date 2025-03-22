@@ -1,6 +1,7 @@
 import 'package:bondtime/Dashboard/dashboard.dart';
 import 'package:bondtime/Settings/settings_page.dart';
 import 'package:bondtime/activity/activity_screen.dart';
+import 'package:bondtime/bondy/ai_welcome_screen.dart';
 import 'package:bondtime/feedback/feedback_screen.dart';
 import 'package:bondtime/rewardScreen/rewards_screen.dart';
 import 'package:bondtime/signin/forgot_password_screen.dart';
@@ -9,6 +10,7 @@ import 'package:bondtime/signup/baby_registration_screen.dart';
 import 'package:bondtime/signup/onboarding_screen.dart';
 import 'package:bondtime/signup/role_selection_page.dart';
 import 'package:bondtime/signup/sign_up_screen.dart';
+import 'package:bondtime/welcomePages/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
@@ -36,7 +38,8 @@ class MyApp extends StatelessWidget {
         ),
       ),
       routes: {
-        '/': (context) => const OnboardingScreen(),
+        '/': (context) => const SplashScreen(),
+        "/onBoarding": (context) => const OnboardingScreen(),
         '/sign-up': (context) => const SignUpScreen(),
         '/baby-registration': (context) => const BabyRegistrationScreen(),
         '/dashboard': (context) => const DashboardScreen(),
@@ -56,6 +59,7 @@ class MyApp extends StatelessWidget {
               durationSpent: 0,
             ),
         '/rewardsScreen': (context) => RewardsScreen(),
+        '/bondy': (context) => const AIWelcomeScreen(),
       },
     );
   }
