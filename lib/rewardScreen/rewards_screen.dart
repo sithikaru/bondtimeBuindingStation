@@ -102,13 +102,15 @@ class _RewardsScreenState extends State<RewardsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final lastUnlocked = allMilestones.reversed.firstWhere(
-      (b) => unlockedBadges.contains(b.key),
-      orElse: () => allMilestones.first,
-    );
-
+    // Split unlocked and upcoming badges
+    final unlocked =
+        allMilestones.where((b) => unlockedBadges.contains(b.key)).toList();
     final upcoming =
         allMilestones.where((b) => !unlockedBadges.contains(b.key)).toList();
+
+    // Get the last unlocked badge
+    final lastUnlocked =
+        unlocked.isNotEmpty ? unlocked.last : allMilestones.first;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -206,6 +208,30 @@ class _RewardsScreenState extends State<RewardsScreen> {
                 ),
               ),
               SizedBox(height: 24),
+
+              // Show Unlocked Badges
+              if (unlocked.isNotEmpty) ...[
+                Text(
+                  "Unlocked Badges",
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                SizedBox(height: 12),
+                ListView.builder(
+                  physics: NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  itemCount: unlocked.length,
+                  itemBuilder: (context, index) {
+                    final badge = unlocked[index];
+                    return badgeTile(badge, true);
+                  },
+                ),
+                SizedBox(height: 24),
+              ],
+
+              // Show What's Next
               Text(
                 "What's next",
                 style: TextStyle(
@@ -213,91 +239,96 @@ class _RewardsScreenState extends State<RewardsScreen> {
                   fontWeight: FontWeight.w500,
                 ),
               ),
-              SizedBox(height: 16),
+              SizedBox(height: 12),
               ListView.builder(
                 physics: NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
                 itemCount: upcoming.length,
                 itemBuilder: (context, index) {
                   final badge = upcoming[index];
-                  final progress = (currentStreak / badge.dayTarget).clamp(
-                    0.0,
-                    1.0,
-                  );
-
-                  return Container(
-                    margin: EdgeInsets.only(bottom: 12),
-                    padding: EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Color(0xFFF5F5F5),
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    child: Row(
-                      children: [
-                        SvgPicture.asset(
-                          'assets/icons/reward_icon.svg',
-                          height: 30,
-                          width: 30,
-                          color: Colors.black,
-                        ),
-                        SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                badge.title,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                ),
-                              ),
-                              Text(
-                                "${badge.description}\n(${badge.dayTarget} days streak)",
-                                style: TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Column(
-                          children: [
-                            Text(
-                              "$currentStreak/${badge.dayTarget}",
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            SizedBox(height: 4),
-                            Container(
-                              width: 50,
-                              height: 8,
-                              decoration: BoxDecoration(
-                                color: Colors.grey[300],
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: FractionallySizedBox(
-                                alignment: Alignment.centerLeft,
-                                widthFactor: progress,
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.black,
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  );
+                  return badgeTile(badge, false);
                 },
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget badgeTile(BadgeMilestone badge, bool isUnlocked) {
+    final progress = (currentStreak / badge.dayTarget).clamp(0.0, 1.0);
+
+    return Container(
+      margin: EdgeInsets.only(bottom: 12),
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Color(0xFFF5F5F5),
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: Row(
+        children: [
+          SvgPicture.asset(
+            'assets/icons/reward_icon.svg',
+            height: 30,
+            width: 30,
+            color: isUnlocked ? Colors.amber : Colors.black,
+          ),
+          SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  badge.title,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: isUnlocked ? Colors.amber[800] : Colors.black,
+                  ),
+                ),
+                Text(
+                  "${badge.description}\n(${badge.dayTarget} days streak)",
+                  style: TextStyle(
+                    color: isUnlocked ? Colors.amber[600] : Colors.grey,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Column(
+            children: [
+              Text(
+                "$currentStreak/${badge.dayTarget}",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: isUnlocked ? Colors.amber[800] : Colors.black,
+                ),
+              ),
+              SizedBox(height: 4),
+              Container(
+                width: 50,
+                height: 8,
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: FractionallySizedBox(
+                  alignment: Alignment.centerLeft,
+                  widthFactor: progress,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: isUnlocked ? Colors.amber : Colors.black,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
