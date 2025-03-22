@@ -1,3 +1,5 @@
+import 'package:bondtime/utils/api_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../widgets/ai_text_input.dart';
 import '../widgets/ai_message_bubble.dart';
@@ -12,19 +14,27 @@ class AIChatScreen extends StatefulWidget {
 class _AIChatScreenState extends State<AIChatScreen> {
   List<Map<String, String>> messages = [];
 
-  void sendMessage(String text) {
+  void sendMessage(String text) async {
+    final userId = FirebaseAuth.instance.currentUser?.uid;
+    if (userId == null) return;
+
     setState(() {
       messages.add({'sender': 'user', 'text': text});
       messages.add({'sender': 'ai', 'text': 'Thinking...'});
     });
 
-    // Simulate AI thinking
-    Future.delayed(Duration(seconds: 2), () {
+    try {
+      final aiReply = await ApiService.sendChatMessage(userId, text);
       setState(() {
         messages.removeLast();
-        messages.add({'sender': 'ai', 'text': 'Here is a helpful response!'});
+        messages.add({'sender': 'ai', 'text': aiReply});
       });
-    });
+    } catch (e) {
+      setState(() {
+        messages.removeLast();
+        messages.add({'sender': 'ai', 'text': 'Oops! Something went wrong.'});
+      });
+    }
   }
 
   @override
@@ -34,10 +44,7 @@ class _AIChatScreenState extends State<AIChatScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 1,
-        title: Text(
-          'BondTime',
-          style: TextStyle(color: Colors.black),
-        ),
+        title: Text('BondTime', style: TextStyle(color: Colors.black)),
         centerTitle: true,
       ),
       body: Column(

@@ -360,17 +360,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               String category = activities[index]['category'];
                               String icon;
                               switch (category) {
-                                case 'fineMotor':
-                                  icon = 'assets/icons/fine_motor.svg';
+                                case 'fine motor':
+                                  icon = 'assets/icons/Asset 1.svg';
                                   break;
-                                case 'grossMotor':
-                                  icon = 'assets/icons/gross_motor.svg';
+                                case 'gross motor':
+                                  icon = 'assets/icons/Asset 2.svg';
                                   break;
                                 case 'communication':
-                                  icon = 'assets/icons/communication.svg';
+                                  icon = 'assets/icons/Asset 3.svg';
                                   break;
                                 case 'sensory':
-                                  icon = 'assets/icons/sensory.svg';
+                                  icon = 'assets/icons/Asset 4.svg';
                                   break;
                                 default:
                                   icon = 'assets/icons/activity1.svg';

@@ -117,6 +117,10 @@ flutter:
     - assets/images/father_child.png
     - assets/images/mother_baby.png
     - assets/images/mother_daughter.png
+    - assets/images/Asset1.svg
+    - assets/images/Asset2.svg
+    - assets/images/Asset3.svg
+    - assets/images/Asset4.svg
     - assets/images/logo.png
     - assets/icons/activities_selected.svg
     - assets/icons/activities.svg

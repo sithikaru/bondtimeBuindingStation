@@ -40,6 +40,29 @@ class ApiService {
     }
   }
 
+  static Future<String> sendChatMessage(String userId, String message) async {
+    final url = Uri.parse("$baseUrl/chat");
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({"userId": userId, "message": message}),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return data['response'] ?? "Sorry, I didn't get that.";
+      } else {
+        print("⚠️ Chat API failed: ${response.body}");
+        throw Exception("Failed to get AI response");
+      }
+    } catch (e) {
+      print("❌ Chat error: $e");
+      rethrow;
+    }
+  }
+
   // Submit user feedback to the server
   static Future<String> submitFeedback(
     String userId,
