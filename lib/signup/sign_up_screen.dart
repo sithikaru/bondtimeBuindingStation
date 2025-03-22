@@ -19,7 +19,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
       TextEditingController();
 
   bool _isFormValid = false;
+
+  /// Controls the visibility of the "Password" field
   bool _isPasswordVisible = false;
+
+  /// Controls the visibility of the "Confirm Password" field
   bool _isConfirmPasswordVisible = false;
 
   String? _emailError;
@@ -91,7 +95,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   Future<void> _onSubmit() async {
     _validateForm();
-
     if (!_isFormValid) return;
 
     try {
@@ -128,9 +131,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
         context,
       ).showSnackBar(SnackBar(content: Text(errorMessage)));
     } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text("An unexpected error occurred.")));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("An unexpected error occurred.")),
+      );
     }
   }
 
@@ -309,10 +312,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
             filled: true,
             fillColor: Colors.white,
             hintText: hint,
-            hintStyle: const TextStyle(
-              color: Color(0xFFBDBDBD),
-            ), // Placeholder text color changed
+            hintStyle: const TextStyle(color: Color(0xFFBDBDBD)),
             errorText: errorText,
+            // Show the leading SVG icon only if provided
             prefixIcon:
                 svgIconPath != null
                     ? Padding(
@@ -322,6 +324,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         height: 20,
                         width: 20,
                       ),
+                    )
+                    : null,
+            // Add an IconButton to toggle password visibility if it's a password field
+            suffixIcon:
+                isPassword
+                    ? IconButton(
+                      icon: Icon(
+                        isPasswordVisible
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                      ),
+                      onPressed: togglePasswordVisibility,
                     )
                     : null,
             border: OutlineInputBorder(

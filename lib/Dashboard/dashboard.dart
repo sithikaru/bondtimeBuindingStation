@@ -58,7 +58,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       var result = await ApiService.getActivities(userId);
       print("API Response: $result"); // Debug log
 
-      if (result == null || !result.containsKey("activities")) {
+      if (!result.containsKey("activities")) {
         throw Exception(
           "Invalid API response: Missing 'activities' key or null response",
         );
@@ -207,7 +207,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 BlendMode.srcIn,
               ),
             ),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pushNamed(context, '/settings');
+            },
           ),
           const SizedBox(width: 3),
         ],
