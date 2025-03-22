@@ -44,9 +44,16 @@ class _AIChatScreenState extends State<AIChatScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 1,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () {
+            Navigator.pushReplacementNamed(context, '/dashboard');
+          },
+        ),
         title: Text('BondTime', style: TextStyle(color: Colors.black)),
         centerTitle: true,
       ),
+
       body: Column(
         children: [
           Expanded(
