@@ -22,6 +22,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   int currentPage = 0;
   int tipsCurrentPage = 0;
   int selectedDayIndex = 3; // Default selected day for time chart
+  int completedToday = 0;
 
   int rewardStars = 10;
 
@@ -45,6 +46,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     super.initState();
     _fetchActivities();
     _fetchDailyTips();
+    _fetchCompletedActivities();
   }
 
   Future<void> _fetchActivities() async {
@@ -166,6 +168,31 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
   }
 
+  Future<void> _fetchCompletedActivities() async {
+    try {
+      String userId = FirebaseAuth.instance.currentUser!.uid;
+      final dateKey = DateTime.now().toIso8601String().split('T').first;
+
+      final snapshot =
+          await FirebaseFirestore.instance
+              .collection("users")
+              .doc(userId)
+              .collection("activities")
+              .doc(dateKey)
+              .collection("completedActivities")
+              .get();
+
+      setState(() {
+        completedToday = snapshot.docs.length;
+      });
+    } catch (e) {
+      print("Error fetching completed activities: $e");
+      setState(() {
+        completedToday = 0;
+      });
+    }
+  }
+
   @override
   void dispose() {
     _pageController.dispose();
@@ -232,7 +259,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                ProgressBar(rewardStars: rewardStars),
+                ProgressBar(
+                  totalActivities: activities.length,
+                  completedActivities: completedToday,
+                ),
+
                 const SizedBox(height: 20),
                 // Activities Section
                 SizedBox(

@@ -52,6 +52,7 @@ class MyApp extends StatelessWidget {
         '/feedbackScreen':
             (context) => FeedbackScreen(
               activityId: ModalRoute.of(context)!.settings.arguments as String,
+              durationSpent: 0,
             ),
       },
     );

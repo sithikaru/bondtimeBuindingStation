@@ -61,6 +61,10 @@ class _ActivityScreenTwoState extends State<ActivityScreenTwo> {
             timerText = "Done";
             isDone = true;
             progressWidth = maxWidth;
+            int totalDurationSpent =
+                (widget.activity["recommendedDuration"] ?? 10);
+            // You can use real tracking later if user pauses/skips
+
             Navigator.push(
               context,
               MaterialPageRoute(
@@ -68,6 +72,7 @@ class _ActivityScreenTwoState extends State<ActivityScreenTwo> {
                     (context) => FeedbackScreen(
                       activityId:
                           widget.activity['activityId'] ?? 'activity123',
+                      durationSpent: totalDurationSpent,
                     ),
               ),
             );

@@ -313,6 +313,7 @@ class _VoiceAssistanceScreenState extends State<VoiceAssistanceScreen> {
                                         activityId:
                                             widget.activity['activityId'] ??
                                             'activity123',
+                                        durationSpent: 0,
                                       ),
                                 ),
                               );
