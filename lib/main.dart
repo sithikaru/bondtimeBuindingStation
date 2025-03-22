@@ -1,4 +1,5 @@
 import 'package:bondtime/Dashboard/dashboard.dart';
+import 'package:bondtime/Settings/settings_page.dart';
 import 'package:bondtime/activity/activity_screen.dart';
 import 'package:bondtime/feedback/feedback_screen.dart';
 import 'package:bondtime/signin/forgot_password_screen.dart';
@@ -41,6 +42,7 @@ class MyApp extends StatelessWidget {
         '/sign-in': (context) => const SignInScreen(),
         '/forgotPassword': (context) => const ForgotPasswordScreen(),
         '/role_selection': (context) => RoleSelectionPage(),
+        '/settings': (context) => SettingsPage(),
         '/activityScreen':
             (context) => ActivityScreen(
               activity:
@@ -50,6 +52,7 @@ class MyApp extends StatelessWidget {
         '/feedbackScreen':
             (context) => FeedbackScreen(
               activityId: ModalRoute.of(context)!.settings.arguments as String,
+              durationSpent: 0,
             ),
       },
     );

@@ -134,7 +134,8 @@ class RoleCard extends StatelessWidget {
   final bool isSelected;
   final VoidCallback onTap;
 
-  RoleCard({
+  const RoleCard({
+    super.key,
     required this.title,
     required this.iconPath,
     required this.isSelected,
