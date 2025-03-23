@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
 
@@ -37,6 +38,55 @@ class ApiService {
     } catch (e) {
       print("Unexpected error: $e");
       throw Exception("Failed to fetch activities: $e");
+    }
+  }
+
+  static Future<Map<String, String>> getHeaders() async {
+    final User? user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      throw Exception('User not authenticated');
+    }
+
+    final token = await user.getIdToken();
+    return {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    };
+  }
+
+  static Future<Map<String, dynamic>> getHealthAlerts(String userId) async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/health-alerts?userId=$userId'),
+      headers: await getHeaders(),
+    );
+
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      throw Exception('Failed to fetch health alerts');
+    }
+  }
+
+  static Future<String> sendChatMessage(String userId, String message) async {
+    final url = Uri.parse("$baseUrl/chat");
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({"userId": userId, "message": message}),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return data['response'] ?? "Sorry, I didn't get that.";
+      } else {
+        print("⚠️ Chat API failed: ${response.body}");
+        throw Exception("Failed to get AI response");
+      }
+    } catch (e) {
+      print("❌ Chat error: $e");
+      rethrow;
     }
   }
 

@@ -15,6 +15,28 @@ class _BottomNavBarState extends State<BottomNavBar> {
     setState(() {
       _selectedIndex = index;
     });
+
+    switch (index) {
+      case 0:
+        Navigator.pushNamed(context, '/dashboard');
+        break;
+      case 1:
+        Navigator.pushNamed(context, '/bondy');
+        break;
+      case 2:
+        Navigator.pushNamed(context, '/activities');
+        break;
+      case 3:
+        Navigator.pushNamed(
+          context,
+          '/pediatricianlist',
+        ); // remove the leading slash
+        break;
+
+      case 4:
+        Navigator.pushNamed(context, '/settings');
+        break;
+    }
   }
 
   @override

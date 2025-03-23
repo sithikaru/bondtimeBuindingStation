@@ -1,3 +1,4 @@
+import 'package:bondtime/disease_recognition/diseaseRecognition.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -23,8 +24,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   int tipsCurrentPage = 0;
   int selectedDayIndex = 3; // Default selected day for time chart
   int completedToday = 0;
-
-  int rewardStars = 10;
+  int streakCount = 0;
 
   List<Map<String, dynamic>> activities = [];
   bool isLoading = true;
@@ -34,12 +34,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
   bool isTipsLoading = true;
   String tipsErrorMessage = '';
 
-  // Stores the display role (e.g., Mama, Papa, etc.)
   String userDisplayRole = "";
-  // Stores the SVG icon path based on user's role
   String roleIcon = "";
-  // Stores the user's first name
   String userFirstName = "";
+
+  bool _hasHealthAlerts = false;
+  String _healthMessage = '';
+  List<String> _recommendedActions = [];
 
   @override
   void initState() {
@@ -47,6 +48,27 @@ class _DashboardScreenState extends State<DashboardScreen> {
     _fetchActivities();
     _fetchDailyTips();
     _fetchCompletedActivities();
+    _fetchStreak();
+    _checkHealthAlerts();
+  }
+
+  Future<void> _checkHealthAlerts() async {
+    try {
+      String userId = FirebaseAuth.instance.currentUser!.uid;
+      var response = await ApiService.getHealthAlerts(userId);
+
+      if (response['hasAlerts']) {
+        setState(() {
+          _hasHealthAlerts = true;
+          _healthMessage = response['message'];
+          _recommendedActions = List<String>.from(
+            response['recommendedActions'],
+          );
+        });
+      }
+    } catch (e) {
+      print("Error checking health alerts: $e");
+    }
   }
 
   Future<void> _fetchActivities() async {
@@ -58,7 +80,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
     try {
       String userId = FirebaseAuth.instance.currentUser!.uid;
       var result = await ApiService.getActivities(userId);
-      print("API Response: $result"); // Debug log
 
       if (!result.containsKey("activities")) {
         throw Exception(
@@ -66,7 +87,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
         );
       }
 
-      // Convert the activities map to a list (including recommendedDuration)
       Map<String, dynamic> activitiesMap = result["activities"] ?? {};
       List<Map<String, dynamic>> fetchedActivities =
           activitiesMap.entries.map((entry) {
@@ -99,6 +119,30 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
   }
 
+  Future<void> _fetchStreak() async {
+    try {
+      String userId = FirebaseAuth.instance.currentUser!.uid;
+      final doc =
+          await FirebaseFirestore.instance
+              .collection("users")
+              .doc(userId)
+              .collection("progress")
+              .doc("streak")
+              .get();
+
+      if (doc.exists) {
+        setState(() {
+          streakCount = doc.data()?['currentStreak'] ?? 0;
+        });
+      }
+    } catch (e) {
+      print("Error fetching streak: $e");
+      setState(() {
+        streakCount = 0;
+      });
+    }
+  }
+
   Future<void> _fetchDailyTips() async {
     setState(() {
       isTipsLoading = true;
@@ -106,7 +150,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
     });
 
     try {
-      // Fetch the logged-in user's document from Firestore
       String userId = FirebaseAuth.instance.currentUser!.uid;
       DocumentSnapshot userDoc =
           await FirebaseFirestore.instance
@@ -118,12 +161,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
         throw Exception("User role not found.");
       }
 
-      // Retrieve user's role and firstName from Firestore
       String userRole = userDoc.get("role");
       String firstName = userDoc.get("firstName");
-      print("Fetched user role: $userRole");
 
-      // Map the user role to display text and SVG icon
       String displayRole;
       String iconPath;
       if (userRole == "Mother") {
@@ -135,12 +175,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
       } else if (userRole == "Grand Parent") {
         displayRole = "Grand Parent";
         iconPath = "assets/images/grand.svg";
-      } else if (userRole == "Caregiver") {
-        displayRole = "Caregiver";
+      } else if (userRole == "Care Giver") {
+        displayRole = "Care Giver";
         iconPath = "assets/images/caregiver.svg";
       } else {
         displayRole = userRole;
-        iconPath = "assets/images/mother.svg"; // Fallback icon if needed
+        iconPath = "assets/images/mother.svg";
       }
 
       setState(() {
@@ -149,7 +189,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
         userFirstName = firstName;
       });
 
-      // Call the backend to get daily tips based on the user's role
       List<String> fetchedTips = await ApiService.getDailyTips(userRole);
 
       setState(() {
@@ -202,7 +241,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Use userFirstName instead of a fallback "User"
     return Scaffold(
       backgroundColor: const Color(0xFFFDFDFD),
       appBar: AppBar(
@@ -223,7 +261,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ),
             onPressed: () {},
           ),
-          const SizedBox(width: 8),
           IconButton(
             icon: SvgPicture.asset(
               'assets/icons/settings.svg',
@@ -239,9 +276,44 @@ class _DashboardScreenState extends State<DashboardScreen> {
             },
           ),
           const SizedBox(width: 3),
+          Padding(
+            padding: const EdgeInsets.only(right: 16.0),
+            child: GestureDetector(
+              onTap: () {
+                Navigator.pushNamed(context, '/rewardsScreen');
+              },
+              child: Container(
+                constraints: const BoxConstraints(minWidth: 46, minHeight: 28),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFED7D7),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      "$streakCount",
+                      style: const TextStyle(
+                        color: Colors.red,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(width: 3),
+                    SvgPicture.asset(
+                      'assets/icons/streaks_icon.svg',
+                      height: 18,
+                      width: 18,
+                      color: Colors.red,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
         ],
       ),
-      bottomNavigationBar: BottomNavBar(),
+      // bottomNavigationBar: BottomNavBar(),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -263,7 +335,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   totalActivities: activities.length,
                   completedActivities: completedToday,
                 ),
-
                 const SizedBox(height: 20),
                 // Activities Section
                 SizedBox(
@@ -296,17 +367,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               String category = activities[index]['category'];
                               String icon;
                               switch (category) {
-                                case 'fineMotor':
-                                  icon = 'assets/icons/fine_motor.svg';
+                                case 'fine motor':
+                                  icon = 'assets/icons/Asset 1.svg';
                                   break;
-                                case 'grossMotor':
-                                  icon = 'assets/icons/gross_motor.svg';
+                                case 'gross motor':
+                                  icon = 'assets/icons/Asset 2.svg';
                                   break;
                                 case 'communication':
-                                  icon = 'assets/icons/communication.svg';
+                                  icon = 'assets/icons/Asset 3.svg';
                                   break;
                                 case 'sensory':
-                                  icon = 'assets/icons/sensory.svg';
+                                  icon = 'assets/icons/Asset 4.svg';
                                   break;
                                 default:
                                   icon = 'assets/icons/activity1.svg';
@@ -331,7 +402,27 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           ),
                 ),
                 const SizedBox(height: 20),
-                // Daily Tips Section: show only if there are tip cards
+                // Disease Recognition Card
+                // Updated Disease Recognition Card
+                _hasHealthAlerts
+                    ? RecognitionCard(
+                      title: "WE NOTICED PATTERNS",
+                      description: _healthMessage,
+                      imagePath: 'assets/icons/warning.svg',
+                      onPrimaryButtonPressed: () {
+                        Navigator.pushNamed(
+                          context,
+                          '/pediatriciansScreen',
+                          arguments: {
+                            'recommendedActions': _recommendedActions,
+                          },
+                        );
+                      },
+                      primaryButtonText: "SEE RECOMMENDATIONS",
+                    )
+                    : const SizedBox.shrink(),
+                const SizedBox(height: 20),
+                // Daily Tips Section
                 dailyTips.isNotEmpty
                     ? SizedBox(
                       height: 175,

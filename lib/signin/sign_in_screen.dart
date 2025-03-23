@@ -228,6 +228,10 @@ class _SignInScreenState extends State<SignInScreen> {
               style: ElevatedButton.styleFrom(
                 backgroundColor:
                     _isFormValid ? Colors.black : const Color(0xFFA0A0A0),
+                foregroundColor:
+                    _isFormValid
+                        ? const Color.fromARGB(255, 255, 255, 255)
+                        : const Color.fromARGB(255, 37, 37, 37),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(13),
                 ),
@@ -281,24 +285,24 @@ class _SignInScreenState extends State<SignInScreen> {
                 Expanded(child: Divider(thickness: 1)),
               ],
             ),
-            const SizedBox(height: 20),
-            _buildSocialButton(
-              "Continue with Apple",
-              "assets/images/apple.svg",
-              _signInWithApple,
-            ),
+            // const SizedBox(height: 20),
+            // _buildSocialButton(
+            //   "Continue with Apple",
+            //   "assets/images/apple.svg",
+            //   _signInWithApple,
+            // ),
             const SizedBox(height: 15),
             _buildSocialButton(
               "Continue with Google",
               "assets/images/google.svg",
               _signInWithGoogle,
             ),
-            const SizedBox(height: 15),
-            _buildSocialButton(
-              "Continue with Facebook",
-              "assets/images/facebook.svg",
-              _signInWithFacebook,
-            ),
+            // const SizedBox(height: 15),
+            // _buildSocialButton(
+            //   "Continue with Facebook",
+            //   "assets/images/facebook.svg",
+            //   _signInWithFacebook,
+            // ),
             const SizedBox(height: 30),
           ],
         ),
