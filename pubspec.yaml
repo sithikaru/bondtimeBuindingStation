@@ -169,7 +169,7 @@ flutter:
     - assets/images/doctor3.jpg
     - assets/images/doctor4.jpg
     - assets/images/doctor5.jpg
-
+    - assets/images/bondy.png
 
   # Add custom fonts
   fonts:
