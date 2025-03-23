@@ -75,7 +75,7 @@ class PediatricianListScreenState extends State<PediatricianListScreen>
         // AppBar with BondTime Logo
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(45),
-          child: CustomAppBar(),
+          child: CustomAppBar(showBackButton: true),
         ),
 
         // Main Body with Tabs

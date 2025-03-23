@@ -1,30 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
-class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const CustomAppBar({super.key});
+class CustomAppBar extends StatelessWidget {
+  final bool showBackButton;
 
-  @override
-  Size get preferredSize => Size.fromHeight(45); // 🔥 Adjusted height for logo
+  const CustomAppBar({this.showBackButton = false, super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.white,
-      child: Stack(
-        children: [
-          Positioned(
-            top: 35,
-            left: 20,
-            child: SvgPicture.asset(
-              'assets/icons/bondtime-logo.svg',
-              width: 112,
-              height: 22,
-              fit: BoxFit.contain,
-            ),
-          ),
-        ],
-      ),
+    return AppBar(
+      leading:
+          showBackButton
+              ? IconButton(
+                icon: const Icon(Icons.arrow_back, color: Colors.black),
+                onPressed: () => Navigator.pop(context),
+              )
+              : null,
+      centerTitle: false,
+      backgroundColor: Colors.white,
+      elevation: 0,
     );
   }
 }

@@ -246,7 +246,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        leadingWidth: 30,
+        automaticallyImplyLeading: false,
         title: SvgPicture.asset('assets/icons/BondTime_logo.svg', height: 18),
         actions: [
           IconButton(
