@@ -67,7 +67,7 @@ class DashboardScreenState extends State<DashboardScreen> {
         });
       }
     } catch (e) {
-      print("Error checking health alerts: $e");
+      // print("Error checking health alerts: $e");
     }
   }
 
@@ -108,7 +108,7 @@ class DashboardScreenState extends State<DashboardScreen> {
         isLoading = false;
       });
     } catch (e) {
-      print("Error fetching activities: $e");
+      // print("Error fetching activities: $e");
       setState(() {
         errorMessage =
             e.toString().contains('Timeout') || e.toString().contains('Network')
@@ -136,7 +136,7 @@ class DashboardScreenState extends State<DashboardScreen> {
         });
       }
     } catch (e) {
-      print("Error fetching streak: $e");
+      // print("Error fetching streak: $e");
       setState(() {
         streakCount = 0;
       });
@@ -196,7 +196,7 @@ class DashboardScreenState extends State<DashboardScreen> {
         isTipsLoading = false;
       });
     } catch (e) {
-      print("Error fetching daily tips: $e");
+      // print("Error fetching daily tips: $e");
       setState(() {
         tipsErrorMessage =
             e.toString().contains('Timeout') || e.toString().contains('Network')
@@ -225,7 +225,7 @@ class DashboardScreenState extends State<DashboardScreen> {
         completedToday = snapshot.docs.length;
       });
     } catch (e) {
-      print("Error fetching completed activities: $e");
+      // print("Error fetching completed activities: $e");
       setState(() {
         completedToday = 0;
       });
