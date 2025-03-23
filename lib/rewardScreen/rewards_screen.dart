@@ -149,7 +149,7 @@ class _RewardsScreenState extends State<RewardsScreen> {
                   'assets/icons/streaks_icon.svg',
                   height: 18,
                   width: 18,
-                  color: Colors.red,
+                  colorFilter: ColorFilter.mode(Colors.red, BlendMode.srcIn),
                 ),
               ],
             ),
@@ -160,7 +160,7 @@ class _RewardsScreenState extends State<RewardsScreen> {
               'assets/icons/reward_icon.svg',
               height: 24,
               width: 24,
-              color: Colors.orange,
+              colorFilter: ColorFilter.mode(Colors.orange, BlendMode.srcIn),
             ),
             onPressed: () {},
           ),
@@ -188,7 +188,10 @@ class _RewardsScreenState extends State<RewardsScreen> {
                       'assets/icons/reward_icon.svg',
                       height: 50,
                       width: 50,
-                      color: Colors.orange,
+                      colorFilter: ColorFilter.mode(
+                        Colors.orange,
+                        BlendMode.srcIn,
+                      ),
                     ),
                     SizedBox(height: 8),
                     Text(
@@ -272,7 +275,10 @@ class _RewardsScreenState extends State<RewardsScreen> {
             'assets/icons/reward_icon.svg',
             height: 30,
             width: 30,
-            color: isUnlocked ? Colors.amber : Colors.black,
+            colorFilter: ColorFilter.mode(
+              isUnlocked ? Colors.amber : Colors.black,
+              BlendMode.srcIn,
+            ),
           ),
           SizedBox(width: 16),
           Expanded(
