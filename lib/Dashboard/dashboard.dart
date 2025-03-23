@@ -38,6 +38,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
   String roleIcon = "";
   String userFirstName = "";
 
+  bool _hasHealthAlerts = false;
+  String _healthMessage = '';
+  List<String> _recommendedActions = [];
+
   @override
   void initState() {
     super.initState();
@@ -45,6 +49,26 @@ class _DashboardScreenState extends State<DashboardScreen> {
     _fetchDailyTips();
     _fetchCompletedActivities();
     _fetchStreak();
+    _checkHealthAlerts();
+  }
+
+  Future<void> _checkHealthAlerts() async {
+    try {
+      String userId = FirebaseAuth.instance.currentUser!.uid;
+      var response = await ApiService.getHealthAlerts(userId);
+
+      if (response['hasAlerts']) {
+        setState(() {
+          _hasHealthAlerts = true;
+          _healthMessage = response['message'];
+          _recommendedActions = List<String>.from(
+            response['recommendedActions'],
+          );
+        });
+      }
+    } catch (e) {
+      print("Error checking health alerts: $e");
+    }
   }
 
   Future<void> _fetchActivities() async {
@@ -379,16 +403,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ),
                 const SizedBox(height: 20),
                 // Disease Recognition Card
-                RecognitionCard(
-                  title: "WE ARE A BIT CONCERNED!",
-                  description:
-                      "There are signs of possible hearing issues. Please consult a pediatrician soon.",
-                  imagePath: 'assets/icons/warning.svg',
-                  onPrimaryButtonPressed: () {
-                    Navigator.pushNamed(context, '/pediatriciansScreen');
-                  },
-                  primaryButtonText: "SEE PEDIATRICIANS",
-                ),
+                // Updated Disease Recognition Card
+                _hasHealthAlerts
+                    ? RecognitionCard(
+                      title: "WE NOTICED PATTERNS",
+                      description: _healthMessage,
+                      imagePath: 'assets/icons/warning.svg',
+                      onPrimaryButtonPressed: () {
+                        Navigator.pushNamed(
+                          context,
+                          '/pediatriciansScreen',
+                          arguments: {
+                            'recommendedActions': _recommendedActions,
+                          },
+                        );
+                      },
+                      primaryButtonText: "SEE RECOMMENDATIONS",
+                    )
+                    : const SizedBox.shrink(),
                 const SizedBox(height: 20),
                 // Daily Tips Section
                 dailyTips.isNotEmpty
