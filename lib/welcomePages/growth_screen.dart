@@ -15,11 +15,7 @@ class GrowthScreen extends StatelessWidget {
           children: [
             const Text(
               "The First Years Shape a Lifetime",
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'InterTight',
-              ),
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 20),
@@ -27,7 +23,6 @@ class GrowthScreen extends StatelessWidget {
             const SizedBox(height: 20),
             const Text(
               "In these early years, love and connection lay the foundation for strong learning, confidence, and emotional well-being.",
-              style: TextStyle(fontFamily: 'InterTight'),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 40),
@@ -46,10 +41,7 @@ class GrowthScreen extends StatelessWidget {
                     MaterialPageRoute(builder: (_) => const ThriveScreen()),
                   );
                 },
-                child: const Text(
-                  "Next",
-                  style: TextStyle(fontFamily: 'InterTight'),
-                ),
+                child: const Text("Next"),
               ),
             ),
           ],

@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:bondtime/activity/activity_screen.dart';
 
-class ActivityCard extends StatelessWidget {
+class Activity_Listcard extends StatelessWidget {
   final Map<String, dynamic> activity;
   final String icon;
   final int currentPage;
   final int index;
   final int totalPages;
 
-  ActivityCard({
+  Activity_Listcard({
     super.key,
     required this.activity,
     required this.icon,
