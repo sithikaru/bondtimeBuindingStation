@@ -154,7 +154,7 @@ class _VoiceAssistanceScreenState extends State<VoiceAssistanceScreen> {
                             color: Colors.black,
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.2),
+                                color: Colors.black.withValues(),
                                 blurRadius: 20,
                                 offset: const Offset(0, 10),
                               ),
@@ -203,7 +203,7 @@ class _VoiceAssistanceScreenState extends State<VoiceAssistanceScreen> {
               ),
             ),
             if (showPopup) ...[
-              Container(color: Colors.black.withOpacity(0.5)),
+              Container(color: Colors.black.withValues()),
               Center(
                 child: Container(
                   width: 344,
