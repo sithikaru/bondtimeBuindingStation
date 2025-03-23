@@ -252,12 +252,17 @@ class SettingsPageState extends State<SettingsPage> {
                         await SharedPreferences.getInstance();
                     await prefs.setBool('isLoggedIn', false);
                     await prefs.clear();
+
+                    if (!mounted)
+                      return; // ✅ ensures context is still safe to use
+
                     Navigator.pushNamedAndRemoveUntil(
                       context,
                       '/sign-in',
                       (route) => false,
                     );
                   },
+
                   child: Container(
                     width: 380,
                     height: 65,

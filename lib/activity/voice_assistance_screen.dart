@@ -9,10 +9,10 @@ class VoiceAssistanceScreen extends StatefulWidget {
   const VoiceAssistanceScreen({super.key, required this.activity});
 
   @override
-  _VoiceAssistanceScreenState createState() => _VoiceAssistanceScreenState();
+  VoiceAssistanceScreenState createState() => VoiceAssistanceScreenState();
 }
 
-class _VoiceAssistanceScreenState extends State<VoiceAssistanceScreen> {
+class VoiceAssistanceScreenState extends State<VoiceAssistanceScreen> {
   FlutterTts flutterTts = FlutterTts();
   bool isPlaying = false;
   bool hasCompleted = false;
@@ -72,7 +72,7 @@ class _VoiceAssistanceScreenState extends State<VoiceAssistanceScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
+    return PopScope(
       onWillPop: () async {
         if (showPopup) {
           setState(() {

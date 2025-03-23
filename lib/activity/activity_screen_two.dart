@@ -15,10 +15,10 @@ class ActivityScreenTwo extends StatefulWidget {
   });
 
   @override
-  _ActivityScreenTwoState createState() => _ActivityScreenTwoState();
+  ActivityScreenTwoState createState() => ActivityScreenTwoState();
 }
 
-class _ActivityScreenTwoState extends State<ActivityScreenTwo> {
+class ActivityScreenTwoState extends State<ActivityScreenTwo> {
   late int minutes;
   int seconds =
       0; // Start with 0 seconds since we'll set minutes from recommendedDuration
@@ -131,7 +131,7 @@ class _ActivityScreenTwoState extends State<ActivityScreenTwo> {
               'assets/icons/notifications.svg',
               height: 24,
               width: 24,
-              color: Colors.black,
+              colorFilter: ColorFilter.mode(Colors.black, BlendMode.srcIn),
             ),
             onPressed: () {},
           ),
@@ -142,7 +142,7 @@ class _ActivityScreenTwoState extends State<ActivityScreenTwo> {
                 'assets/icons/settings.svg',
                 height: 24,
                 width: 24,
-                color: Colors.black,
+                colorFilter: ColorFilter.mode(Colors.black, BlendMode.srcIn),
               ),
               onPressed: () {},
             ),
