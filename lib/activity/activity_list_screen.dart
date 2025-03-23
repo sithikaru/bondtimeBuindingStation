@@ -270,19 +270,19 @@ class _ActivityListScreenState extends State<ActivityListScreen> {
                                 String icon;
                                 switch (activity['category']) {
                                   case 'fine motor':
-                                    icon = 'assets/icons/Asset 1.svg';
+                                    icon = 'assets/images/Asset1.svg';
                                     break;
                                   case 'gross motor':
-                                    icon = 'assets/icons/Asset 2.svg';
+                                    icon = 'assets/images/Asset2.svg';
                                     break;
                                   case 'communication':
-                                    icon = 'assets/icons/Asset 3.svg';
+                                    icon = 'assets/images/Asset3.svg';
                                     break;
                                   case 'sensory':
-                                    icon = 'assets/icons/Asset 4.svg';
+                                    icon = 'assets/images/Asset4.svg';
                                     break;
                                   default:
-                                    icon = 'assets/icons/activity1.svg';
+                                    icon = 'assets/images/Asset1.svg';
                                 }
 
                                 return Column(
