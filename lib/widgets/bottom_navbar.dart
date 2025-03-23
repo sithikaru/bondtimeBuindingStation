@@ -24,7 +24,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
         Navigator.pushNamed(context, '/bondy');
         break;
       case 2:
-        Navigator.pushNamed(context, '/activityScreen');
+        Navigator.pushNamed(context, '/activities');
         break;
       case 3:
         Navigator.pushNamed(

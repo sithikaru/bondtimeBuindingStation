@@ -313,7 +313,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
         ],
       ),
-      bottomNavigationBar: BottomNavBar(),
+      // bottomNavigationBar: BottomNavBar(),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(

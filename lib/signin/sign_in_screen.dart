@@ -228,6 +228,10 @@ class _SignInScreenState extends State<SignInScreen> {
               style: ElevatedButton.styleFrom(
                 backgroundColor:
                     _isFormValid ? Colors.black : const Color(0xFFA0A0A0),
+                foregroundColor:
+                    _isFormValid
+                        ? const Color.fromARGB(255, 255, 255, 255)
+                        : const Color.fromARGB(255, 37, 37, 37),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(13),
                 ),
