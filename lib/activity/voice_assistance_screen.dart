@@ -72,7 +72,7 @@ class VoiceAssistanceScreenState extends State<VoiceAssistanceScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return PopScope(
+    return WillPopScope(
       onWillPop: () async {
         if (showPopup) {
           setState(() {
