@@ -218,32 +218,24 @@ class ActivityScreenTwoState extends State<ActivityScreenTwo> {
                 decoration: BoxDecoration(
                   color: Colors.black,
                   borderRadius: BorderRadius.circular(15),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(),
-                      blurRadius: 20,
-                      spreadRadius: 0,
-                      offset: const Offset(0, 10),
-                    ),
-                  ],
                 ),
                 child: Stack(
                   children: [
                     Positioned.fill(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.grey[600],
-                          borderRadius: BorderRadius.circular(15),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(15),
+                        child: Container(
+                          decoration: BoxDecoration(color: Colors.grey[600]),
                         ),
                       ),
                     ),
-                    AnimatedContainer(
-                      duration: const Duration(seconds: 1),
-                      width: progressWidth,
-                      height: 58,
-                      decoration: BoxDecoration(
-                        color: Colors.black,
-                        borderRadius: BorderRadius.circular(15),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(15),
+                      child: AnimatedContainer(
+                        duration: const Duration(seconds: 1),
+                        width: progressWidth,
+                        height: 58,
+                        decoration: BoxDecoration(color: Colors.black),
                       ),
                     ),
                     Center(
