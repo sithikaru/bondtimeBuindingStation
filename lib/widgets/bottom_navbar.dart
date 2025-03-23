@@ -47,7 +47,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
         color: Color(0xFFFDFDFD), // Background color
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05), // Soft shadow
+            color: Colors.black.withValues(), // Soft shadow
             offset: Offset(0, 4), // X: 0, Y: 4
             blurRadius: 9.3,
             spreadRadius: 9,

@@ -38,7 +38,7 @@ class _FeedbackCardState extends State<FeedbackCard> {
           borderRadius: BorderRadius.circular(18.65),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(),
               blurRadius: 10,
               spreadRadius: 2,
             ),

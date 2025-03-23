@@ -55,6 +55,7 @@ dependencies:
   permission_handler: ^11.4.0
   shared_preferences: ^2.5.2
   flutter_launcher_icons: ^0.14.3
+  flutter_lints: ^5.0.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -137,7 +138,6 @@ flutter:
     - assets/icons/activities.svg
     - assets/icons/activity1.svg
     - assets/icons/BondTime_logo.svg
-    - assets/icons/bondTime_logo.svg
     - assets/icons/bondy_selected.svg
     - assets/icons/bondy.svg
     - assets/icons/dashboard_selected.svg

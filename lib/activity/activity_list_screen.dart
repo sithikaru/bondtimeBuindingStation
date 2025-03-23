@@ -97,7 +97,7 @@ class _ActivityListScreenState extends State<ActivityListScreen> {
         isLoading = false;
       });
     } catch (e) {
-      print("Error fetching activities: $e");
+      // print("Error fetching activities: $e");
       setState(() {
         errorMessage = 'Failed to fetch activities.';
         isLoading = false;

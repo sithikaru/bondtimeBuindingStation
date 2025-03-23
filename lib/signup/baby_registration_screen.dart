@@ -7,10 +7,10 @@ class BabyRegistrationScreen extends StatefulWidget {
   const BabyRegistrationScreen({super.key});
 
   @override
-  _BabyRegistrationScreenState createState() => _BabyRegistrationScreenState();
+  BabyRegistrationScreenState createState() => BabyRegistrationScreenState();
 }
 
-class _BabyRegistrationScreenState extends State<BabyRegistrationScreen> {
+class BabyRegistrationScreenState extends State<BabyRegistrationScreen> {
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _dobController = TextEditingController();
