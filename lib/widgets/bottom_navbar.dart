@@ -27,8 +27,12 @@ class _BottomNavBarState extends State<BottomNavBar> {
         Navigator.pushNamed(context, '/activityScreen');
         break;
       case 3:
-        Navigator.pushNamed(context, '/pediatricians');
+        Navigator.pushNamed(
+          context,
+          '/pediatricianlist',
+        ); // remove the leading slash
         break;
+
       case 4:
         Navigator.pushNamed(context, '/settings');
         break;

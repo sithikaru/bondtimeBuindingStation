@@ -4,6 +4,7 @@ import 'package:bondtime/activity/activity_screen.dart';
 import 'package:bondtime/bondy/ai_welcome_screen.dart';
 import 'package:bondtime/feedback/feedback_screen.dart';
 import 'package:bondtime/rewardScreen/rewards_screen.dart';
+import 'package:bondtime/screens/pediatrician_list_screen.dart';
 import 'package:bondtime/signin/forgot_password_screen.dart';
 import 'package:bondtime/signin/sign_in_screen.dart';
 import 'package:bondtime/signup/baby_registration_screen.dart';
@@ -11,13 +12,27 @@ import 'package:bondtime/signup/onboarding_screen.dart';
 import 'package:bondtime/signup/role_selection_page.dart';
 import 'package:bondtime/signup/sign_up_screen.dart';
 import 'package:bondtime/welcomePages/splash_screen.dart';
+import 'package:bondtime/providers/favorites_provider.dart'; // <-- Make sure this path is correct
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart'; // <-- Import provider
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(const MyApp());
+
+  // Wrap MyApp in MultiProvider at the top level
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider<FavoritesProvider>(
+          create: (_) => FavoritesProvider(),
+        ),
+        // Add other providers here if needed
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -39,7 +54,7 @@ class MyApp extends StatelessWidget {
       ),
       routes: {
         '/': (context) => const SplashScreen(),
-        "/onBoarding": (context) => const OnboardingScreen(),
+        '/onBoarding': (context) => const OnboardingScreen(),
         '/sign-up': (context) => const SignUpScreen(),
         '/baby-registration': (context) => const BabyRegistrationScreen(),
         '/dashboard': (context) => const DashboardScreen(),
@@ -60,6 +75,7 @@ class MyApp extends StatelessWidget {
             ),
         '/rewardsScreen': (context) => RewardsScreen(),
         '/bondy': (context) => const AIWelcomeScreen(),
+        '/pediatricianlist': (context) => const PediatricianListScreen(),
       },
     );
   }
