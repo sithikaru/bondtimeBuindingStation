@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 import '../widgets/onboarding_page.dart';
 import 'welcome_screen.dart';
 
-class OnboardingScreen extends StatefulWidget {
-  const OnboardingScreen({super.key});
+class OnboardingWelcomeScreen extends StatefulWidget {
+  const OnboardingWelcomeScreen({super.key});
 
   @override
-  _OnboardingScreenState createState() => _OnboardingScreenState();
+  _OnboardingWelcomeScreenState createState() =>
+      _OnboardingWelcomeScreenState();
 }
 
-class _OnboardingScreenState extends State<OnboardingScreen> {
+class _OnboardingWelcomeScreenState extends State<OnboardingWelcomeScreen> {
   final PageController _controller = PageController();
   int _currentIndex = 0;
 

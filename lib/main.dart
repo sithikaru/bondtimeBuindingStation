@@ -12,25 +12,24 @@ import 'package:bondtime/signup/baby_registration_screen.dart';
 import 'package:bondtime/signup/onboarding_screen.dart';
 import 'package:bondtime/signup/role_selection_page.dart';
 import 'package:bondtime/signup/sign_up_screen.dart';
+import 'package:bondtime/welcomePages/onboarding_screen.dart';
 import 'package:bondtime/welcomePages/splash_screen.dart';
 import 'package:bondtime/providers/favorites_provider.dart'; // <-- Make sure this path is correct
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart'; // <-- Import provider
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart'; // <-- Import provider
+
+late SharedPreferences prefs;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  prefs = await SharedPreferences.getInstance(); // preload prefs
 
-  // Wrap MyApp in MultiProvider at the top level
   runApp(
     MultiProvider(
-      providers: [
-        ChangeNotifierProvider<FavoritesProvider>(
-          create: (_) => FavoritesProvider(),
-        ),
-        // Add other providers here if needed
-      ],
+      providers: [ChangeNotifierProvider(create: (_) => FavoritesProvider())],
       child: const MyApp(),
     ),
   );
@@ -77,7 +76,8 @@ class MyApp extends StatelessWidget {
         '/rewardsScreen': (context) => RewardsScreen(),
         '/bondy': (context) => const AIWelcomeScreen(),
         '/pediatricianlist': (context) => const PediatricianListScreen(),
-        'activities': (context) => const ActivityListScreen(),
+        '/activities': (context) => const ActivityListScreen(),
+        '/welcomeOnBoard': (context) => const OnboardingWelcomeScreen(),
       },
     );
   }

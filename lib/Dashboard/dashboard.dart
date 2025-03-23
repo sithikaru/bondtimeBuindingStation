@@ -246,7 +246,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        leadingWidth: 30,
+        automaticallyImplyLeading: false,
         title: SvgPicture.asset('assets/icons/BondTime_logo.svg', height: 18),
         actions: [
           IconButton(
@@ -313,7 +313,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
         ],
       ),
-      // bottomNavigationBar: BottomNavBar(),
+      bottomNavigationBar: BottomNavBar(),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -368,19 +368,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               String icon;
                               switch (category) {
                                 case 'fine motor':
-                                  icon = 'assets/icons/Asset 1.svg';
+                                  icon = 'assets/images/Asset1.svg';
                                   break;
                                 case 'gross motor':
-                                  icon = 'assets/icons/Asset 2.svg';
+                                  icon = 'assets/images/Asset2.svg';
                                   break;
                                 case 'communication':
-                                  icon = 'assets/icons/Asset 3.svg';
+                                  icon = 'assets/images/Asset3.svg';
                                   break;
                                 case 'sensory':
-                                  icon = 'assets/icons/Asset 4.svg';
+                                  icon = 'assets/images/Asset4.svg';
                                   break;
                                 default:
-                                  icon = 'assets/icons/activity1.svg';
+                                  icon = 'assets/images/Asset1.svg';
                               }
                               return GestureDetector(
                                 onTap: () {

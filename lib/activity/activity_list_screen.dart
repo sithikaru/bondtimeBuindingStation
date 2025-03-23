@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:bondtime/activity/activity_card.dart';
 
 class ActivityListScreen extends StatefulWidget {
@@ -11,23 +11,31 @@ class ActivityListScreen extends StatefulWidget {
 }
 
 class _ActivityListScreenState extends State<ActivityListScreen> {
-  int selectedTabIndex = 0; // 0 = Completed, 1 = Today
+  int selectedTabIndex = 0;
   String selectedFilter = 'All';
 
-  // Firestore data
-  List<Map<String, dynamic>> allActivities = [];
-  Set<String> completedActivityIds = {}; // store just the IDs of completed
+  List<Map<String, dynamic>> todayActivities = [];
+  List<Map<String, dynamic>> completedActivities = [];
+  List<Map<String, dynamic>> pastActivities = [];
 
   bool isLoading = true;
   String errorMessage = '';
 
+  final List<Map<String, dynamic>> filterOptions = [
+    {'label': 'All', 'color': Colors.black},
+    {'label': 'Gross Motor Skills', 'color': Colors.blue},
+    {'label': 'Fine Motor Skills', 'color': Colors.green},
+    {'label': 'Communication Skills', 'color': Colors.amber},
+    {'label': 'Sensory Skills', 'color': Colors.pink},
+  ];
+
   @override
   void initState() {
     super.initState();
-    _fetchAllActivities();
+    fetchActivitiesFromFirestore();
   }
 
-  Future<void> _fetchAllActivities() async {
+  Future<void> fetchActivitiesFromFirestore() async {
     setState(() {
       isLoading = true;
       errorMessage = '';
@@ -35,93 +43,105 @@ class _ActivityListScreenState extends State<ActivityListScreen> {
 
     try {
       final userId = FirebaseAuth.instance.currentUser!.uid;
+      final now = DateTime.now();
+      final todayKey = now.toIso8601String().split('T').first;
 
-      // 1. Fetch *all* user activities from Firestore.
-      //    Suppose your schema is:
-      //    users -> userId -> collection("allActivities") -> doc(activityId)
-      //    This might differ if you're storing them differently.
-      final allSnapshot =
+      final snapshot =
           await FirebaseFirestore.instance
-              .collection("users")
+              .collection('users')
               .doc(userId)
-              .collection("allActivities")
+              .collection('activities')
               .get();
 
-      final List<Map<String, dynamic>> fetchedAll =
-          allSnapshot.docs.map((doc) {
-            final data = doc.data();
-            return {
-              "activityId": doc.id,
-              "title": data["title"] ?? "No Title",
-              "description": data["description"] ?? "No description",
-              "category": data["category"] ?? "N/A",
-              "timestamp":
-                  data["timestamp"] ?? DateTime.now().millisecondsSinceEpoch,
-            };
-          }).toList();
+      List<Map<String, dynamic>> today = [];
+      List<Map<String, dynamic>> completed = [];
+      List<Map<String, dynamic>> past = [];
 
-      // 2. Fetch *completed* activities for the user. You mentioned “past” ones,
-      //    but often we store completions by date. E.g.:
-      //    users -> userId -> collection("activities") -> doc(dateKey) -> collection("completedActivities")
-      //    If you want *all* completed, you might store them differently. For example:
-      //    users -> userId -> collection("completedActivities") -> doc(activityId)
-      final completedSnapshot =
-          await FirebaseFirestore.instance
-              .collection("users")
-              .doc(userId)
-              .collection("completedActivities")
-              .get();
+      for (var doc in snapshot.docs) {
+        String dateKey = doc.id;
+        final data = doc.data();
 
-      // We’ll store the IDs so we can easily check if each activity is done
-      final Set<String> completedIds =
-          completedSnapshot.docs.map((doc) => doc.id).toSet();
+        if (data['activities'] == null || data['activities'] is! Map) continue;
+
+        Map<String, dynamic> activities = Map<String, dynamic>.from(
+          data['activities'],
+        );
+
+        activities.forEach((key, value) {
+          final activity = Map<String, dynamic>.from(value);
+          activity['activityId'] = key;
+          activity['date'] = dateKey;
+
+          final category =
+              (activity['category'] ?? '').toString().toLowerCase();
+          activity['category'] = category;
+
+          final isCompleted = activity['completed'] == true;
+
+          if (dateKey == todayKey) {
+            today.add(activity);
+          } else {
+            if (isCompleted) {
+              completed.add(activity);
+            } else {
+              past.add(activity);
+            }
+          }
+        });
+      }
 
       setState(() {
-        allActivities = fetchedAll;
-        completedActivityIds = completedIds;
+        todayActivities = today;
+        completedActivities = completed;
+        pastActivities = past;
         isLoading = false;
       });
     } catch (e) {
+      print("Error fetching activities: $e");
       setState(() {
-        errorMessage = 'Failed to fetch activities: $e';
+        errorMessage = 'Failed to fetch activities.';
         isLoading = false;
       });
     }
   }
 
-  // Filter logic
-  List<Map<String, dynamic>> get filteredActivities {
-    // If no filter, show all
-    if (selectedFilter == 'All') {
-      return allActivities;
+  List<Map<String, dynamic>> get filteredList {
+    List<Map<String, dynamic>> baseList;
+
+    if (selectedTabIndex == 0) {
+      baseList = todayActivities;
+    } else if (selectedTabIndex == 1) {
+      baseList = completedActivities;
     } else {
-      // e.g. filter by "Gross Motor Skills", "Fine Motor Skills", etc.
-      return allActivities.where((act) {
-        return act["category"]?.toLowerCase().contains(
-          selectedFilter.toLowerCase(),
-        );
-      }).toList();
+      baseList = pastActivities;
     }
-  }
 
-  // Completed or Today logic
-  List<Map<String, dynamic>> get completedList {
-    return filteredActivities.where((act) {
-      return completedActivityIds.contains(act["activityId"]);
+    if (selectedFilter == 'All') return baseList;
+
+    final key = selectedFilter.toLowerCase().replaceAll(' skills', '');
+
+    return baseList.where((a) {
+      return a['category'].toString().contains(key);
     }).toList();
   }
 
-  List<Map<String, dynamic>> get todayList {
-    // For “Today,” you might filter by date or show just those not completed.
-    // This is just an example that everything not in “completed” is “today.”
-    return filteredActivities.where((act) {
-      return !completedActivityIds.contains(act["activityId"]);
-    }).toList();
+  String getTabTitle(int index) {
+    switch (index) {
+      case 0:
+        return "Today";
+      case 1:
+        return "Completed";
+      case 2:
+        return "Past Activities";
+      default:
+        return "";
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text('BondTime', style: TextStyle(color: Colors.black)),
         backgroundColor: Colors.white,
@@ -136,188 +156,152 @@ class _ActivityListScreenState extends State<ActivityListScreen> {
       body:
           isLoading
               ? const Center(child: CircularProgressIndicator())
-              : errorMessage.isNotEmpty
-              ? Center(child: Text(errorMessage))
               : Column(
                 children: [
-                  // ------------- Tab row -------------
+                  // Tabs and Filter Row
                   Padding(
                     padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        // Tabs
+                        // Tab Selector
                         Row(
-                          children: [
-                            GestureDetector(
-                              onTap: () => setState(() => selectedTabIndex = 0),
+                          children: List.generate(3, (index) {
+                            return GestureDetector(
+                              onTap:
+                                  () =>
+                                      setState(() => selectedTabIndex = index),
                               child: Padding(
                                 padding: const EdgeInsets.only(right: 24.0),
                                 child: Text(
-                                  "Completed",
+                                  getTabTitle(index),
                                   style: TextStyle(
                                     fontSize: 16,
                                     fontWeight:
-                                        selectedTabIndex == 0
+                                        selectedTabIndex == index
                                             ? FontWeight.bold
                                             : FontWeight.normal,
                                     color:
-                                        selectedTabIndex == 0
+                                        selectedTabIndex == index
                                             ? Colors.black
                                             : Colors.grey,
                                   ),
                                 ),
                               ),
-                            ),
-                            GestureDetector(
-                              onTap: () => setState(() => selectedTabIndex = 1),
-                              child: Text(
-                                "Today",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight:
-                                      selectedTabIndex == 1
-                                          ? FontWeight.bold
-                                          : FontWeight.normal,
-                                  color:
-                                      selectedTabIndex == 1
-                                          ? Colors.black
-                                          : Colors.grey,
-                                ),
-                              ),
-                            ),
-                          ],
+                            );
+                          }),
                         ),
-
-                        // Filter
-                        _buildFilterDropdown(),
+                        // Filter Dropdown
+                        PopupMenuButton<String>(
+                          onSelected: (value) {
+                            setState(() => selectedFilter = value);
+                          },
+                          itemBuilder: (context) {
+                            return filterOptions.map((item) {
+                              return PopupMenuItem<String>(
+                                value: item['label'],
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      item['label'],
+                                      style: const TextStyle(fontSize: 13),
+                                    ),
+                                    Container(
+                                      width: 10,
+                                      height: 10,
+                                      decoration: BoxDecoration(
+                                        color: item['color'],
+                                        shape: BoxShape.circle,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }).toList();
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 6,
+                            ),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFEAEAEA),
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  selectedFilter,
+                                  style: const TextStyle(
+                                    fontSize: 13,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                const SizedBox(width: 4),
+                                const Icon(
+                                  Icons.keyboard_arrow_down,
+                                  size: 18,
+                                  color: Colors.black,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ),
                   const SizedBox(height: 12),
-                  // ------------- Tab content -------------
+                  // Content
                   Expanded(
-                    child: SingleChildScrollView(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child:
-                          selectedTabIndex == 0
-                              ? _buildActivityList(completedList)
-                              : _buildActivityList(todayList),
-                    ),
+                    child:
+                        filteredList.isEmpty
+                            ? const Center(child: Text("No activities found"))
+                            : ListView.builder(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16.0,
+                              ),
+                              itemCount: filteredList.length,
+                              itemBuilder: (context, index) {
+                                final activity = filteredList[index];
+
+                                String icon;
+                                switch (activity['category']) {
+                                  case 'fine motor':
+                                    icon = 'assets/images/Asset1.svg';
+                                    break;
+                                  case 'gross motor':
+                                    icon = 'assets/images/Asset2.svg';
+                                    break;
+                                  case 'communication':
+                                    icon = 'assets/images/Asset3.svg';
+                                    break;
+                                  case 'sensory':
+                                    icon = 'assets/images/Asset4.svg';
+                                    break;
+                                  default:
+                                    icon = 'assets/images/Asset1.svg';
+                                }
+
+                                return Column(
+                                  children: [
+                                    ActivityCard(
+                                      activity: activity,
+                                      icon: icon,
+                                      currentPage: index,
+                                      index: index,
+                                      totalPages: filteredList.length,
+                                    ),
+                                    const SizedBox(height: 16),
+                                  ],
+                                );
+                              },
+                            ),
                   ),
                 ],
               ),
-    );
-  }
-
-  // A reusable widget for the filter button
-  Widget _buildFilterDropdown() {
-    final List<Map<String, dynamic>> filterOptions = [
-      {'label': 'All', 'color': Colors.black},
-      {'label': 'Gross Motor Skills', 'color': Colors.blue},
-      {'label': 'Fine Motor Skills', 'color': Colors.green},
-      {'label': 'Communication Skills', 'color': Colors.amber},
-      {'label': 'Sensory Skills', 'color': Colors.pink},
-    ];
-
-    return PopupMenuButton<String>(
-      onSelected: (value) {
-        setState(() => selectedFilter = value);
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        decoration: BoxDecoration(
-          color: const Color(0xFFEAEAEA),
-          borderRadius: BorderRadius.circular(30),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              selectedFilter,
-              style: const TextStyle(fontSize: 13, color: Colors.black),
-            ),
-            const SizedBox(width: 4),
-            const Icon(
-              Icons.keyboard_arrow_down,
-              size: 18,
-              color: Colors.black,
-            ),
-          ],
-        ),
-      ),
-      itemBuilder: (BuildContext context) {
-        return filterOptions.map((item) {
-          return PopupMenuItem<String>(
-            value: item['label'],
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(item['label'], style: const TextStyle(fontSize: 13)),
-                Container(
-                  width: 10,
-                  height: 10,
-                  decoration: BoxDecoration(
-                    color: item['color'],
-                    shape: BoxShape.circle,
-                  ),
-                ),
-              ],
-            ),
-          );
-        }).toList();
-      },
-    );
-  }
-
-  // A widget that builds out the list of activities. Reuses ActivityCard with your data.
-  Widget _buildActivityList(List<Map<String, dynamic>> listData) {
-    if (listData.isEmpty) {
-      return const Center(
-        child: Padding(
-          padding: EdgeInsets.only(top: 40),
-          child: Text("No activities found"),
-        ),
-      );
-    }
-
-    return Column(
-      children: List.generate(listData.length, (index) {
-        final activity = listData[index];
-        // pick icon based on category, etc.
-        String category = activity['category'].toString().toLowerCase();
-        String icon;
-        switch (category) {
-          case 'fine motor':
-            icon = 'assets/icons/Asset 1.svg';
-            break;
-          case 'gross motor':
-            icon = 'assets/icons/Asset 2.svg';
-            break;
-          case 'communication':
-            icon = 'assets/icons/Asset 3.svg';
-            break;
-          case 'sensory':
-            icon = 'assets/icons/Asset 4.svg';
-            break;
-          default:
-            icon = 'assets/icons/activity1.svg';
-        }
-
-        return Column(
-          children: [
-            ActivityCard(
-              // Notice we pass the entire activity
-              activity: activity,
-              icon: icon,
-              currentPage: index, // or 0 if you have no “pagination”
-              index: index,
-              totalPages: listData.length,
-            ),
-            const SizedBox(height: 16),
-          ],
-        );
-      }),
     );
   }
 }
