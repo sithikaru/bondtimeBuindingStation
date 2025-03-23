@@ -7,10 +7,10 @@ class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
 
   @override
-  _SettingsPageState createState() => _SettingsPageState();
+  SettingsPageState createState() => SettingsPageState();
 }
 
-class _SettingsPageState extends State<SettingsPage> {
+class SettingsPageState extends State<SettingsPage> {
   // Toggle states and user data
   bool activityReminders = true;
   bool pushNotifications = false;
@@ -41,7 +41,7 @@ class _SettingsPageState extends State<SettingsPage> {
         });
       }
     } catch (e) {
-      print("Error loading user settings: $e");
+      // // print("Error loading user settings: $e");
     }
   }
 
@@ -55,7 +55,7 @@ class _SettingsPageState extends State<SettingsPage> {
         },
       }, SetOptions(merge: true));
     } catch (e) {
-      print("Error updating settings: $e");
+      // // print("Error updating settings: $e");
     }
   }
 
