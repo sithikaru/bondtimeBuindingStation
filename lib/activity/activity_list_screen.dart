@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:bondtime/activity/activity_card.dart';
+import 'package:bondtime/activity/activity_cardForList.dart';
 
 class ActivityListScreen extends StatefulWidget {
   const ActivityListScreen({super.key});
@@ -15,7 +15,6 @@ class _ActivityListScreenState extends State<ActivityListScreen> {
   String selectedFilter = 'All';
 
   List<Map<String, dynamic>> todayActivities = [];
-  List<Map<String, dynamic>> completedActivities = [];
   List<Map<String, dynamic>> pastActivities = [];
 
   bool isLoading = true;
@@ -54,7 +53,6 @@ class _ActivityListScreenState extends State<ActivityListScreen> {
               .get();
 
       List<Map<String, dynamic>> today = [];
-      List<Map<String, dynamic>> completed = [];
       List<Map<String, dynamic>> past = [];
 
       for (var doc in snapshot.docs) {
@@ -76,23 +74,16 @@ class _ActivityListScreenState extends State<ActivityListScreen> {
               (activity['category'] ?? '').toString().toLowerCase();
           activity['category'] = category;
 
-          final isCompleted = activity['completed'] == true;
-
           if (dateKey == todayKey) {
             today.add(activity);
           } else {
-            if (isCompleted) {
-              completed.add(activity);
-            } else {
-              past.add(activity);
-            }
+            past.add(activity);
           }
         });
       }
 
       setState(() {
         todayActivities = today;
-        completedActivities = completed;
         pastActivities = past;
         isLoading = false;
       });
@@ -110,8 +101,6 @@ class _ActivityListScreenState extends State<ActivityListScreen> {
 
     if (selectedTabIndex == 0) {
       baseList = todayActivities;
-    } else if (selectedTabIndex == 1) {
-      baseList = completedActivities;
     } else {
       baseList = pastActivities;
     }
@@ -130,8 +119,6 @@ class _ActivityListScreenState extends State<ActivityListScreen> {
       case 0:
         return "Today";
       case 1:
-        return "Completed";
-      case 2:
         return "Past Activities";
       default:
         return "";
@@ -166,7 +153,7 @@ class _ActivityListScreenState extends State<ActivityListScreen> {
                       children: [
                         // Tab Selector
                         Row(
-                          children: List.generate(3, (index) {
+                          children: List.generate(2, (index) {
                             return GestureDetector(
                               onTap:
                                   () =>
