@@ -77,7 +77,7 @@ class MyApp extends StatelessWidget {
         '/rewardsScreen': (context) => RewardsScreen(),
         '/bondy': (context) => const AIWelcomeScreen(),
         '/pediatricianlist': (context) => const PediatricianListScreen(),
-        'activities': (context) => const ActivityListScreen(),
+        '/activities': (context) => const ActivityListScreen(),
       },
     );
   }
