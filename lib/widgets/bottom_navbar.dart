@@ -45,14 +45,6 @@ class _BottomNavBarState extends State<BottomNavBar> {
       padding: EdgeInsets.only(top: 5), // Maintain top padding
       decoration: BoxDecoration(
         color: Color(0xFFFDFDFD), // Background color
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(), // Soft shadow
-            offset: Offset(0, 4), // X: 0, Y: 4
-            blurRadius: 9.3,
-            spreadRadius: 9,
-          ),
-        ],
       ),
       child: BottomNavigationBar(
         backgroundColor: Colors.transparent, // Transparent background

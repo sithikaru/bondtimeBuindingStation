@@ -152,13 +152,6 @@ class VoiceAssistanceScreenState extends State<VoiceAssistanceScreen> {
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             color: Colors.black,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(),
-                                blurRadius: 20,
-                                offset: const Offset(0, 10),
-                              ),
-                            ],
                           ),
                           child: IconButton(
                             icon: Icon(
