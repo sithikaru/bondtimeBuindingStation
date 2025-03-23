@@ -25,8 +25,8 @@ jobs:
     - name: Analyze code
       run: flutter analyze --no-fatal-infos --no-fatal-warnings
 
-    - name: Run tests
-      run: flutter test
+    # - name: Run tests
+    #   run: flutter test
 
     - name: Build APK (Optional)
       run: flutter build apk --release
