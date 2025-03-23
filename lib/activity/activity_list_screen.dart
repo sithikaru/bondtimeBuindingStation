@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:bondtime/activity/activity_card.dart';
+import 'package:bondtime/activity/activity_Listcard.dart';
 
 class ActivityListScreen extends StatefulWidget {
   const ActivityListScreen({super.key});
@@ -287,7 +287,7 @@ class _ActivityListScreenState extends State<ActivityListScreen> {
 
                                 return Column(
                                   children: [
-                                    ActivityCard(
+                                    Activity_Listcard(
                                       activity: activity,
                                       icon: icon,
                                       currentPage: index,
