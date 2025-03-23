@@ -33,8 +33,11 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Image.asset("assets/images/logo.png"), // your splash logo
+      body: DefaultTextStyle(
+        style: const TextStyle(fontFamily: 'InterTight'),
+        child: Center(
+          child: Image.asset("assets/images/logo.png"), // your splash logo
+        ),
       ),
     );
   }

@@ -57,51 +57,65 @@ class _OnboardingWelcomeScreenState extends State<OnboardingWelcomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        // Center everything vertically and horizontally
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Expanded(
-              child: PageView.builder(
-                controller: _controller,
-                onPageChanged: (index) {
-                  setState(() {
-                    _currentIndex = index;
-                  });
-                },
-                itemCount: onboardingData.length,
-                itemBuilder: (context, index) {
-                  return OnboardingPage(
-                    title: onboardingData[index]["title"]!,
-                    image: onboardingData[index]["image"]!,
-                    description: onboardingData[index]["description"]!,
-                  );
-                },
+    return MaterialApp(
+      theme: ThemeData(
+        textTheme: const TextTheme(
+          displayLarge: TextStyle(fontFamily: 'InterTight'),
+          displayMedium: TextStyle(fontFamily: 'InterTight'),
+          displaySmall: TextStyle(fontFamily: 'InterTight'),
+          headlineLarge: TextStyle(fontFamily: 'InterTight'),
+          headlineMedium: TextStyle(fontFamily: 'InterTight'),
+          headlineSmall: TextStyle(fontFamily: 'InterTight'),
+          titleLarge: TextStyle(fontFamily: 'InterTight'),
+          titleMedium: TextStyle(fontFamily: 'InterTight'),
+        ),
+      ),
+      home: Scaffold(
+        body: Center(
+          // Center everything vertically and horizontally
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Expanded(
+                child: PageView.builder(
+                  controller: _controller,
+                  onPageChanged: (index) {
+                    setState(() {
+                      _currentIndex = index;
+                    });
+                  },
+                  itemCount: onboardingData.length,
+                  itemBuilder: (context, index) {
+                    return OnboardingPage(
+                      title: onboardingData[index]["title"]!,
+                      image: onboardingData[index]["image"]!,
+                      description: onboardingData[index]["description"]!,
+                    );
+                  },
+                ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16.0,
-                vertical: 24,
-              ),
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.black,
-                  minimumSize: const Size(309, 58),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16.0,
+                  vertical: 24,
+                ),
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.black,
+                    minimumSize: const Size(309, 58),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                  ),
+                  onPressed: _nextPage,
+                  child: const Text(
+                    "Next",
+                    style: TextStyle(color: Colors.white),
                   ),
                 ),
-                onPressed: _nextPage,
-                child: const Text(
-                  "Next",
-                  style: TextStyle(color: Colors.white),
-                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
