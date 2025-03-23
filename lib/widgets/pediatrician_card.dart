@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:permission_handler/permission_handler.dart';
+import '../providers/favorites_provider.dart';
+import '../screens/pediatrician_detail_screen.dart';
+import 'package:logger/logger.dart';
+
+var logger = Logger();
 
 class PediatricianCard extends StatelessWidget {
   final String name;
   final String title;
   final String imagePath;
-  final bool isFavoriteTab;
+  final bool isFavoriteTab; // 🔥 To identify if it's in Favorites Tab
 
   const PediatricianCard({
     super.key,
@@ -17,89 +22,24 @@ class PediatricianCard extends StatelessWidget {
     this.isFavoriteTab = false,
   });
 
-  /// Request Phone permission and launch dialer
-  Future<void> _makePhoneCall(BuildContext context, String number) async {
-    // 1) Request phone permission at runtime
-    final status = await Permission.phone.request();
-    if (status.isGranted) {
-      // 2) If granted, attempt to launch the dialer
-      final telUri = Uri(scheme: 'tel', path: number);
-      if (await canLaunchUrl(telUri)) {
-        await launchUrl(telUri);
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('No dialer app found or not set as default.'),
-          ),
-        );
-      }
-    } else if (status.isDenied) {
-      // The user denied permission (but not permanently)
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Phone permission denied.')));
-    } else if (status.isPermanentlyDenied) {
-      // The user permanently denied permission. Direct them to settings.
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Phone permission permanently denied. Please enable it in settings.',
-          ),
-        ),
-      );
-      await openAppSettings();
-    }
-  }
-
-  /// Request SMS permission and launch SMS app
-  Future<void> _sendSms(BuildContext context, String number) async {
-    // 1) Request SMS permission at runtime
-    final status = await Permission.sms.request();
-    if (status.isGranted) {
-      // 2) If granted, attempt to launch the SMS app
-      final smsUri = Uri(scheme: 'sms', path: number);
-      if (await canLaunchUrl(smsUri)) {
-        await launchUrl(smsUri);
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('No SMS app found or not set as default.'),
-          ),
-        );
-      }
-    } else if (status.isDenied) {
-      // The user denied permission (but not permanently)
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('SMS permission denied.')));
-    } else if (status.isPermanentlyDenied) {
-      // The user permanently denied permission. Direct them to settings.
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'SMS permission permanently denied. Please enable it in settings.',
-          ),
-        ),
-      );
-      await openAppSettings();
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
+    // Access FavoritesProvider for managing favorites
+    final favoritesProvider = Provider.of<FavoritesProvider>(context);
+
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+      padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
       child: Container(
         decoration: BoxDecoration(
           color: Colors.transparent,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: const Color(0xFF000000), width: 1),
+          border: Border.all(color: Color(0xFF000000), width: 1),
         ),
         child: Card(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
-          color: const Color(0xFFF5F5F5),
+          color: Color(0xFFF5F5F5),
           margin: EdgeInsets.zero,
           elevation: 3,
           shadowColor: Colors.black.withAlpha(25),
@@ -108,18 +48,17 @@ class PediatricianCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Name/Title Row
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Name + Title
+                    // Name and Title
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             name,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 20.16,
                               fontWeight: FontWeight.w500,
                               color: Color(0xFF212529),
@@ -128,18 +67,18 @@ class PediatricianCard extends StatelessWidget {
                           ),
                           Text(
                             title,
-                            style: const TextStyle(
+                            style: TextStyle(
                               color: Colors.grey,
                               fontFamily: 'InterTight',
                               fontSize: 16.15,
                               fontWeight: FontWeight.w400,
                             ),
                           ),
-                          const SizedBox(height: 6),
+                          SizedBox(height: 6),
                           Row(
                             children: List.generate(
                               5,
-                              (index) => const Icon(
+                              (index) => Icon(
                                 Icons.star,
                                 color: Colors.amber,
                                 size: 16,
@@ -158,7 +97,7 @@ class PediatricianCard extends StatelessWidget {
                           BoxShadow(
                             color: Colors.black.withAlpha(25),
                             blurRadius: 8,
-                            offset: const Offset(0, 4),
+                            offset: Offset(0, 4),
                           ),
                         ],
                       ),
@@ -169,21 +108,39 @@ class PediatricianCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 15),
+                SizedBox(height: 15),
 
-                // Action Buttons (Reserve, SMS, Tel, etc.)
+                // Action Buttons
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     // Reserve Button
                     ElevatedButton(
                       onPressed: () {
-                        // ... possibly navigate somewhere
+                        FocusScope.of(context).unfocus();
+
+                        Future.delayed(Duration(milliseconds: 100), () {
+                          if (context.mounted) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder:
+                                    (context) => PediatricianDetailScreen(
+                                      pediatricianDetails: {
+                                        'name': name,
+                                        'title': title,
+                                        'imagePath': imagePath,
+                                      },
+                                    ),
+                              ),
+                            );
+                          }
+                        });
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.black,
                         foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(
+                        padding: EdgeInsets.symmetric(
                           vertical: 10,
                           horizontal: 25,
                         ),
@@ -193,7 +150,7 @@ class PediatricianCard extends StatelessWidget {
                         elevation: 0,
                         shadowColor: Colors.transparent,
                       ),
-                      child: const Text(
+                      child: Text(
                         'Reserve',
                         style: TextStyle(
                           fontSize: 16.15,
@@ -202,19 +159,26 @@ class PediatricianCard extends StatelessWidget {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 6),
 
                     // SMS Button
+                    SizedBox(width: 6),
                     SizedBox(
                       width: 42,
                       height: 42,
                       child: IconButton(
-                        onPressed: () {
-                          // Request SMS permission, then open SMS
-                          _sendSms(context, '1234567890');
+                        onPressed: () async {
+                          final Uri smsUri = Uri(
+                            scheme: 'sms',
+                            path: '1234567890',
+                          );
+                          if (await canLaunchUrl(smsUri)) {
+                            await launchUrl(smsUri);
+                          } else {
+                            logger.e('Could not launch SMS app');
+                          }
                         },
                         padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(),
+                        constraints: BoxConstraints(),
                         icon: SvgPicture.asset(
                           'assets/icons/sms.svg',
                           fit: BoxFit.contain,
@@ -223,19 +187,26 @@ class PediatricianCard extends StatelessWidget {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 6),
 
                     // Tel Button
+                    SizedBox(width: 6),
                     SizedBox(
                       width: 42,
                       height: 42,
                       child: IconButton(
-                        onPressed: () {
-                          // Request Phone permission, then open dialer
-                          _makePhoneCall(context, '1234567890');
+                        onPressed: () async {
+                          final Uri telUri = Uri(
+                            scheme: 'tel',
+                            path: '1234567890',
+                          );
+                          if (await canLaunchUrl(telUri)) {
+                            await launchUrl(telUri);
+                          } else {
+                            logger.e('Could not launch Phone app');
+                          }
                         },
                         padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(),
+                        constraints: BoxConstraints(),
                         icon: SvgPicture.asset(
                           'assets/icons/tel.svg',
                           fit: BoxFit.contain,
@@ -245,14 +216,23 @@ class PediatricianCard extends StatelessWidget {
                       ),
                     ),
 
-                    // If in Favorites Tab, display extra button, etc.
-                    if (isFavoriteTab) const SizedBox(width: 34),
+                    // If in Favorites Tab, show Heart
+                    if (isFavoriteTab) SizedBox(width: 34),
                     if (isFavoriteTab)
                       IconButton(
+                        icon: Icon(
+                          favoritesProvider.isFavorite(name)
+                              ? Icons.favorite
+                              : Icons.favorite_border,
+                          color:
+                              favoritesProvider.isFavorite(name)
+                                  ? Colors.red
+                                  : Colors.grey,
+                          size: 24,
+                        ),
                         onPressed: () {
-                          // handle favorite logic
+                          favoritesProvider.toggleFavorite(name, imagePath);
                         },
-                        icon: const Icon(Icons.favorite_border),
                       ),
                   ],
                 ),
