@@ -481,7 +481,6 @@ class DashboardScreenState extends State<DashboardScreen> {
                 const SizedBox(height: 20),
                 // Daily Time Chart Section
                 DailyTimeChart(
-                  timeSpent: [1.5, 1.0, 1.7, 1.2, 0.8, 1.9, 0.5],
                   selectedDayIndex: selectedDayIndex,
                   onDaySelected: (index) {
                     setState(() {
