@@ -1,17 +1,92 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-class DailyTimeChart extends StatelessWidget {
-  final List<double> timeSpent;
+class DailyTimeChart extends StatefulWidget {
   final int selectedDayIndex;
   final Function(int) onDaySelected;
 
   const DailyTimeChart({
     super.key,
-    required this.timeSpent,
     required this.selectedDayIndex,
     required this.onDaySelected,
   });
+
+  @override
+  _DailyTimeChartState createState() => _DailyTimeChartState();
+}
+
+class _DailyTimeChartState extends State<DailyTimeChart> {
+  late List<double> timeSpent;
+
+  @override
+  void initState() {
+    super.initState();
+    timeSpent = List.generate(7, (_) => 0.0);
+    _fetchTimeSpentData(); // Fetch data when widget is initialized
+  }
+
+  // Function to fetch total time spent data for the last 7 days
+  Future<void> _fetchTimeSpentData() async {
+    final now = DateTime.now();
+    final lastSevenDays = List.generate(
+      7,
+      (index) => now.subtract(Duration(days: index)),
+    );
+
+    List<double> fetchedTimeSpent = List.generate(7, (_) => 0.0);
+
+    // Query completed activities for the last 7 days
+    for (int i = 0; i < 7; i++) {
+      final dayStart = DateTime(
+        lastSevenDays[i].year,
+        lastSevenDays[i].month,
+        lastSevenDays[i].day,
+      );
+      final dayEnd = dayStart.add(Duration(days: 1));
+
+      // Fetch completed activities for the specific day (no need for completedAt)
+      final querySnapshot =
+          await FirebaseFirestore.instance
+              .collection('activities')
+              .doc('completedActivities')
+              .collection(
+                lastSevenDays[i].toString().split(" ")[0],
+              ) // Specific day collection
+              .get();
+
+      double totalDurationForDay = 0.0;
+
+      // Loop through each completed activity and fetch its recommendedDuration
+      for (var doc in querySnapshot.docs) {
+        final activityId = doc.id;
+
+        // Fetch the corresponding activity's recommendedDuration
+        final activityDoc =
+            await FirebaseFirestore.instance
+                .collection('activities')
+                .doc('activities')
+                .collection(
+                  'details',
+                ) // Assuming activities are stored under details
+                .doc(activityId) // Get activity using activityId
+                .get();
+
+        final recommendedDuration = activityDoc['recommendedDuration'] ?? 0;
+        totalDurationForDay += recommendedDuration.toDouble();
+      }
+
+      // Convert total minutes to hours
+      fetchedTimeSpent[i] =
+          totalDurationForDay / 60; // Convert minutes to hours
+    }
+
+    // Update the state with the fetched data
+    setState(() {
+      timeSpent = fetchedTimeSpent;
+    });
+    print("Updated timeSpent: $timeSpent");
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +113,7 @@ class DailyTimeChart extends StatelessWidget {
           SizedBox(height: 4),
           Text(
             _formatTime(
-              timeSpent[selectedDayIndex],
+              timeSpent[widget.selectedDayIndex],
             ), // ✅ Formats time correctly
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
@@ -69,7 +144,7 @@ class DailyTimeChart extends StatelessWidget {
                         event is FlTapUpEvent) {
                       int tappedIndex =
                           barTouchResponse.spot!.touchedBarGroupIndex;
-                      onDaySelected(tappedIndex);
+                      widget.onDaySelected(tappedIndex);
                     }
                   },
                 ),
@@ -98,7 +173,7 @@ class DailyTimeChart extends StatelessWidget {
                               fontWeight: FontWeight.w500,
                               fontSize: 12,
                               color:
-                                  selectedDayIndex == value.toInt()
+                                  widget.selectedDayIndex == value.toInt()
                                       ? Colors.black
                                       : Colors.grey,
                             ),
@@ -135,7 +210,7 @@ class DailyTimeChart extends StatelessWidget {
                       BarChartRodData(
                         toY: timeSpent[index],
                         color:
-                            selectedDayIndex == index
+                            widget.selectedDayIndex == index
                                 ? Colors.black
                                 : Colors.grey[400],
                         width: 30, // ✅ Set bar width to 30px
