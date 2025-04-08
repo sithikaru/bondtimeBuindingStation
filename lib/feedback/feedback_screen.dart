@@ -52,20 +52,29 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
     required String userId,
     required String activityId,
   }) async {
+    // This ensures we use local date or use a library like intl if you prefer
     final dateKey = DateTime.now().toIso8601String().split('T').first;
 
-    final docRef = FirebaseFirestore.instance
+    final dateDocRef = FirebaseFirestore.instance
         .collection("users")
         .doc(userId)
         .collection("activities")
-        .doc(dateKey)
+        .doc(dateKey);
+
+    // Create the date doc with a top-level field so it's visible in the console
+    await dateDocRef.set({'created': true}, SetOptions(merge: true));
+
+    // Now add a doc in "completedActivities"
+    final completedRef = dateDocRef
         .collection("completedActivities")
         .doc(activityId);
 
-    await docRef.set({
+    await completedRef.set({
       "completed": true,
       "completedAt": DateTime.now().toIso8601String(),
     }, SetOptions(merge: true));
+
+    print("Saved completion for $activityId on $dateKey for user $userId");
   }
 
   @override

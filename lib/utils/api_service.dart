@@ -7,7 +7,7 @@ import 'dart:async';
 class ApiService {
   // Use 10.0.2.2 for Android emulator to reach the host machine
   static const String baseUrl =
-      "https://bondtime-backend-nodejs2.vercel.app"; // Updated for emulator
+      "https://bondtime-backend-nodejs1.vercel.app"; // Updated for emulator
 
   // Fetch activities based on the user's ID and today's date
   static Future<Map<String, dynamic>> getActivities(String userId) async {
