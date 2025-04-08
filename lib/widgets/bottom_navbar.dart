@@ -34,7 +34,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
         break;
 
       case 4:
-        Navigator.pushNamed(context, '/settings');
+        Navigator.pushNamed(context, '/profile');
         break;
     }
   }

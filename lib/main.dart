@@ -4,6 +4,7 @@ import 'package:bondtime/activity/activity_list_screen.dart';
 import 'package:bondtime/activity/activity_screen.dart';
 import 'package:bondtime/bondy/ai_welcome_screen.dart';
 import 'package:bondtime/feedback/feedback_screen.dart';
+import 'package:bondtime/profileScreen/profileScreen.dart';
 import 'package:bondtime/rewardScreen/rewards_screen.dart';
 import 'package:bondtime/screens/pediatrician_list_screen.dart';
 import 'package:bondtime/signin/forgot_password_screen.dart';
@@ -78,6 +79,7 @@ class MyApp extends StatelessWidget {
         '/pediatricianlist': (context) => const PediatricianListScreen(),
         '/activities': (context) => const ActivityListScreen(),
         '/welcomeOnBoard': (context) => const OnboardingWelcomeScreen(),
+        '/profile': (context) => const ProfileScreen(),
       },
     );
   }

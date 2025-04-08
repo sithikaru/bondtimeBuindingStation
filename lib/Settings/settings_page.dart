@@ -14,6 +14,8 @@ class SettingsPageState extends State<SettingsPage> {
   bool activityReminders = true;
   bool pushNotifications = false;
   String userFirstName = "User";
+  TextEditingController _nameController =
+      TextEditingController(); // Controller for name editing
 
   @override
   void initState() {
@@ -56,6 +58,23 @@ class SettingsPageState extends State<SettingsPage> {
       }, SetOptions(merge: true));
     } catch (e) {
       // print("Error updating settings: $e");
+    }
+  }
+
+  Future<void> _updateUserName() async {
+    try {
+      final userId = FirebaseAuth.instance.currentUser!.uid;
+      await FirebaseFirestore.instance.collection('users').doc(userId).set({
+        'firstName': _nameController.text, // Update with the new name
+      }, SetOptions(merge: true));
+
+      // Update the UI with the new name
+      setState(() {
+        userFirstName = _nameController.text;
+      });
+    } catch (e) {
+      // Handle any error that occurs while updating the name
+      // print("Error updating name: $e");
     }
   }
 
@@ -158,14 +177,24 @@ class SettingsPageState extends State<SettingsPage> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      userFirstName,
-                      style: const TextStyle(
-                        fontFamily: 'InterTight',
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    userFirstName == "User"
+                        ? Text(
+                          userFirstName,
+                          style: const TextStyle(
+                            fontFamily: 'InterTight',
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        )
+                        : TextField(
+                          controller: _nameController..text = userFirstName,
+                          style: const TextStyle(
+                            fontFamily: 'InterTight',
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          onSubmitted: (_) => _updateUserName(),
+                        ),
                     const Text(
                       'Edit Your Profile',
                       style: TextStyle(
@@ -176,7 +205,14 @@ class SettingsPageState extends State<SettingsPage> {
                   ],
                 ),
                 const Spacer(),
-                const Icon(Icons.edit, color: Colors.black),
+                IconButton(
+                  icon: const Icon(Icons.edit, color: Colors.black),
+                  onPressed: () {
+                    setState(() {
+                      userFirstName = "User"; // Make the name field editable
+                    });
+                  },
+                ),
               ],
             ),
             const SizedBox(height: 20),
