@@ -69,7 +69,10 @@ class ProfileScreen extends StatelessWidget {
           elevation: 0,
           leading: const BackButton(color: Colors.black),
           centerTitle: true,
-          title: const Text("Profile", style: TextStyle(color: Colors.black)),
+          title: const Text(
+            "Baby's Profile",
+            style: TextStyle(color: Colors.black),
+          ),
           // Settings button removed.
         ),
         body: FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(

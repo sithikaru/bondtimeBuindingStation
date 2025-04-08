@@ -76,7 +76,7 @@ class MyApp extends StatelessWidget {
               durationSpent: 0,
             ),
         '/rewardsScreen': (context) => RewardsScreen(),
-        '/bondy': (context) => const AIWelcomeScreen(),
+        '/bondy': (context) => const MergedScreen(),
         '/pediatricianlist': (context) => const PediatricianListScreen(),
         '/activities': (context) => const ActivityListScreen(),
         '/welcomeOnBoard': (context) => const OnboardingWelcomeScreen(),
