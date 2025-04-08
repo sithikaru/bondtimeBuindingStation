@@ -20,6 +20,8 @@ class BabyRegistrationScreenState extends State<BabyRegistrationScreen> {
       TextEditingController();
   final TextEditingController _currentHeightController =
       TextEditingController();
+  // New controller for head size (in cm)
+  final TextEditingController _headSizeController = TextEditingController();
 
   String? _selectedGender;
   bool _isFormValid = false;
@@ -38,6 +40,9 @@ class BabyRegistrationScreenState extends State<BabyRegistrationScreen> {
     _birthHeightController.addListener(_validateForm);
     _currentWeightController.addListener(_validateForm);
     _currentHeightController.addListener(_validateForm);
+    _headSizeController.addListener(
+      _validateForm,
+    ); // Listen for head size changes
   }
 
   void _validateForm() {
@@ -48,6 +53,7 @@ class BabyRegistrationScreenState extends State<BabyRegistrationScreen> {
           _dobController.text.isNotEmpty &&
           _birthWeightController.text.isNotEmpty &&
           _birthHeightController.text.isNotEmpty &&
+          _headSizeController.text.isNotEmpty && // Validate head size field
           (_isTodayDob ||
               (_currentWeightController.text.isNotEmpty &&
                   _currentHeightController.text.isNotEmpty)) &&
@@ -83,7 +89,7 @@ class BabyRegistrationScreenState extends State<BabyRegistrationScreen> {
       final userId = _auth.currentUser?.uid;
       if (userId == null) throw Exception("User not logged in");
 
-      // Save baby data to Firestore
+      // Save baby data to Firestore including head size.
       await _firestore.collection('users').doc(userId).update({
         'child': {
           'firstName': _firstNameController.text.trim(),
@@ -100,6 +106,7 @@ class BabyRegistrationScreenState extends State<BabyRegistrationScreen> {
               _isTodayDob
                   ? null
                   : double.parse(_currentHeightController.text.trim()),
+          'headSize': double.parse(_headSizeController.text.trim()),
         },
       });
 
@@ -211,6 +218,14 @@ class BabyRegistrationScreenState extends State<BabyRegistrationScreen> {
                 ),
               ],
             ),
+            const SizedBox(height: 10),
+            // New field for Head Size
+            _buildLabeledTextField(
+              "Head Size",
+              "Circumference",
+              _headSizeController,
+              suffix: "cm",
+            ),
             const SizedBox(height: 30),
             const Text(
               "We collect this info to personalize activities and track growth. Your data is secure and used only to enhance your experience.",
@@ -273,13 +288,15 @@ class BabyRegistrationScreenState extends State<BabyRegistrationScreen> {
           enabled: !isDisabled,
           style: TextStyle(
             color:
-                controller.text.isNotEmpty ? Colors.black : Color(0xFFC5C5C5),
+                controller.text.isNotEmpty
+                    ? Colors.black
+                    : const Color(0xFFC5C5C5),
           ),
           keyboardType:
               isDate
                   ? TextInputType.datetime
                   : (suffix != null
-                      ? TextInputType.numberWithOptions(decimal: true)
+                      ? const TextInputType.numberWithOptions(decimal: true)
                       : TextInputType.text),
           inputFormatters:
               suffix != null
@@ -294,7 +311,9 @@ class BabyRegistrationScreenState extends State<BabyRegistrationScreen> {
                       firstDate: DateTime(2000),
                       lastDate: DateTime.now(),
                     );
-                    _onDateSelected(pickedDate!);
+                    if (pickedDate != null) {
+                      _onDateSelected(pickedDate);
+                    }
                   }
                   : null,
           decoration: _inputDecoration(hint, suffix, isDisabled),

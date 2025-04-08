@@ -16,14 +16,7 @@ class ThankYouScreen extends StatelessWidget {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(18.65),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(),
-                blurRadius: 10,
-                spreadRadius: 2,
-                offset: const Offset(0, 5),
-              ),
-            ],
+            border: Border.all(color: Colors.black, width: 1.0),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
           child: Column(

@@ -178,7 +178,8 @@ class _SignInScreenState extends State<SignInScreen> {
           padding: const EdgeInsets.only(left: 10),
           child: IconButton(
             icon: const Icon(Icons.arrow_back),
-            onPressed: () => Navigator.pop(context),
+            onPressed:
+                () => Navigator.pushReplacementNamed(context, '/onBoarding'),
             splashRadius: 20,
           ),
         ),
