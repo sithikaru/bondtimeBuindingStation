@@ -1,7 +1,11 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -14,8 +18,10 @@ class SettingsPageState extends State<SettingsPage> {
   bool activityReminders = true;
   bool pushNotifications = false;
   String userFirstName = "User";
-  TextEditingController _nameController =
-      TextEditingController(); // Controller for name editing
+  bool editingName = false; // Controls whether the name is in edit mode
+  String? _profilePictureUrl; // Null if no profile picture is present
+
+  final TextEditingController _nameController = TextEditingController();
 
   @override
   void initState() {
@@ -36,14 +42,21 @@ class SettingsPageState extends State<SettingsPage> {
         var data = userDoc.data() as Map<String, dynamic>;
         setState(() {
           userFirstName = data['firstName'] ?? "User";
+          _nameController.text = userFirstName;
           if (data.containsKey('settings')) {
             activityReminders = data['settings']['activityReminders'] ?? true;
             pushNotifications = data['settings']['pushNotifications'] ?? false;
           }
+          // Set the profile picture URL if it exists; otherwise, remain null.
+          _profilePictureUrl =
+              (data.containsKey('profilePicture') &&
+                      data['profilePicture'] != null)
+                  ? data['profilePicture']
+                  : null;
         });
       }
     } catch (e) {
-      // print("Error loading user settings: $e");
+      print("Error loading user settings: $e");
     }
   }
 
@@ -57,24 +70,53 @@ class SettingsPageState extends State<SettingsPage> {
         },
       }, SetOptions(merge: true));
     } catch (e) {
-      // print("Error updating settings: $e");
+      print("Error updating settings: $e");
     }
   }
 
   Future<void> _updateUserName() async {
     try {
       final userId = FirebaseAuth.instance.currentUser!.uid;
+      String updatedName = _nameController.text.trim();
       await FirebaseFirestore.instance.collection('users').doc(userId).set({
-        'firstName': _nameController.text, // Update with the new name
+        'firstName': updatedName,
       }, SetOptions(merge: true));
 
-      // Update the UI with the new name
       setState(() {
-        userFirstName = _nameController.text;
+        userFirstName = updatedName;
+        editingName = false;
       });
     } catch (e) {
-      // Handle any error that occurs while updating the name
-      // print("Error updating name: $e");
+      print("Error updating name: $e");
+    }
+  }
+
+  Future<void> _pickProfileImage() async {
+    final pickedFile = await ImagePicker().pickImage(
+      source: ImageSource.gallery,
+    );
+    if (pickedFile != null) {
+      File imageFile = File(pickedFile.path);
+      await _uploadProfileImage(imageFile);
+    }
+  }
+
+  Future<void> _uploadProfileImage(File imageFile) async {
+    try {
+      final userId = FirebaseAuth.instance.currentUser!.uid;
+      final ref = FirebaseStorage.instance.ref().child(
+        'profilePictures/$userId.jpg',
+      );
+      await ref.putFile(imageFile);
+      final downloadUrl = await ref.getDownloadURL();
+      await FirebaseFirestore.instance.collection('users').doc(userId).update({
+        'profilePicture': downloadUrl,
+      });
+      setState(() {
+        _profilePictureUrl = downloadUrl;
+      });
+    } catch (e) {
+      print("Error uploading profile picture: $e");
     }
   }
 
@@ -111,27 +153,29 @@ class SettingsPageState extends State<SettingsPage> {
           children: [
             _buildGeneralSettingsCard(),
             const SizedBox(height: 25),
-            customListTile(
-              icon: Icons.workspace_premium,
-              title: 'Manage Subscription',
-              onTap: () {
-                Navigator.pushNamed(context, '/manage_subscription');
-              },
+            IgnorePointer(
+              ignoring: true,
+              child: Opacity(
+                opacity: 0.5,
+                child: customListTile(
+                  icon: Icons.workspace_premium,
+                  title: 'Manage Subscription (coming soon)',
+                  onTap: () {
+                    Navigator.pushNamed(context, '/manage_subscription');
+                  },
+                ),
+              ),
             ),
-            const SizedBox(height: 25),
-            customListTile(
-              icon: Icons.security,
-              title: 'Security',
-              onTap: () {
-                Navigator.pushNamed(context, '/security');
-              },
-            ),
+
             const SizedBox(height: 25),
             customListTile(
               icon: Icons.message,
               title: 'Contact us',
-              onTap: () {
-                Navigator.pushNamed(context, '/contact_us');
+              onTap: () async {
+                final Uri url = Uri.parse('https://linktr.ee/bondtime');
+                if (!await launchUrl(url)) {
+                  throw Exception('Could not launch $url');
+                }
               },
             ),
             const SizedBox(height: 30),
@@ -167,49 +211,49 @@ class SettingsPageState extends State<SettingsPage> {
             const SizedBox(height: 15),
             Row(
               children: [
-                const CircleAvatar(
-                  radius: 49,
-                  backgroundImage: NetworkImage(
-                    'https://via.placeholder.com/150',
+                _buildProfilePicture(),
+                const SizedBox(width: 15),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      editingName
+                          ? TextField(
+                            controller: _nameController,
+                            style: const TextStyle(
+                              fontFamily: 'InterTight',
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            onSubmitted: (_) => _updateUserName(),
+                          )
+                          : Text(
+                            userFirstName,
+                            style: const TextStyle(
+                              fontFamily: 'InterTight',
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                      const SizedBox(height: 3),
+                      const Text(
+                        'Edit Your Profile',
+                        style: TextStyle(
+                          fontFamily: 'InterTight',
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(width: 15),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    userFirstName == "User"
-                        ? Text(
-                          userFirstName,
-                          style: const TextStyle(
-                            fontFamily: 'InterTight',
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        )
-                        : TextField(
-                          controller: _nameController..text = userFirstName,
-                          style: const TextStyle(
-                            fontFamily: 'InterTight',
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          onSubmitted: (_) => _updateUserName(),
-                        ),
-                    const Text(
-                      'Edit Your Profile',
-                      style: TextStyle(
-                        fontFamily: 'InterTight',
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ],
-                ),
-                const Spacer(),
                 IconButton(
                   icon: const Icon(Icons.edit, color: Colors.black),
                   onPressed: () {
                     setState(() {
-                      userFirstName = "User"; // Make the name field editable
+                      editingName = true;
+                      _nameController.selection = TextSelection.fromPosition(
+                        TextPosition(offset: _nameController.text.length),
+                      );
                     });
                   },
                 ),
@@ -243,6 +287,25 @@ class SettingsPageState extends State<SettingsPage> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildProfilePicture() {
+    return GestureDetector(
+      onTap: _pickProfileImage,
+      child: CircleAvatar(
+        radius: 49,
+        // If _profilePictureUrl is set, display it; otherwise, show a solid background color and an icon.
+        backgroundImage:
+            _profilePictureUrl != null
+                ? NetworkImage(_profilePictureUrl!)
+                : null,
+        backgroundColor: _profilePictureUrl == null ? Colors.grey : null,
+        child:
+            _profilePictureUrl == null
+                ? const Icon(Icons.person, size: 50, color: Colors.white)
+                : null,
       ),
     );
   }
@@ -287,9 +350,7 @@ class SettingsPageState extends State<SettingsPage> {
             await prefs.setBool('isLoggedIn', false);
             await prefs.clear();
 
-            if (!mounted) {
-              return;
-            }
+            if (!mounted) return;
 
             Navigator.pushNamedAndRemoveUntil(
               context,
