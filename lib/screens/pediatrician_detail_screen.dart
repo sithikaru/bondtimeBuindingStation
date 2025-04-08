@@ -7,8 +7,10 @@ import '../widgets/action_buttons.dart';
 class PediatricianDetailScreen extends StatefulWidget {
   final Map<String, String> pediatricianDetails; // Accept details dynamically
 
-  const PediatricianDetailScreen({Key? key, required this.pediatricianDetails})
-    : super(key: key);
+  const PediatricianDetailScreen({
+    super.key,
+    required this.pediatricianDetails,
+  });
 
   @override
   State<PediatricianDetailScreen> createState() =>

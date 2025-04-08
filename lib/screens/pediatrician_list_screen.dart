@@ -10,7 +10,7 @@ import '../widgets/custom_app_bar.dart';
 var logger = Logger();
 
 class PediatricianListScreen extends StatefulWidget {
-  const PediatricianListScreen({Key? key}) : super(key: key);
+  const PediatricianListScreen({super.key});
 
   @override
   PediatricianListScreenState createState() => PediatricianListScreenState();
@@ -106,7 +106,7 @@ class PediatricianListScreenState extends State<PediatricianListScreen>
                 ),
                 labelPadding: const EdgeInsets.only(right: 15),
                 splashFactory: NoSplash.splashFactory,
-                overlayColor: MaterialStateProperty.all(Colors.transparent),
+                overlayColor: WidgetStateProperty.all(Colors.transparent),
                 tabs: const [Tab(text: 'Suggested'), Tab(text: 'Favorites')],
               ),
             ),
