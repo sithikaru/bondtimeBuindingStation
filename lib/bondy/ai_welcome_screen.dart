@@ -136,6 +136,17 @@ class _MergedScreenState extends State<MergedScreen> {
       ),
       child: Scaffold(
         backgroundColor: Colors.transparent, // To display the gradient.
+        // AppBar with a back button that merges with the gradient.
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back, color: Colors.black),
+            onPressed: () {
+              Navigator.pushReplacementNamed(context, '/dashboard');
+            },
+          ),
+        ),
         body: Column(
           children: [
             // Scrollable area for welcome section and messages.
