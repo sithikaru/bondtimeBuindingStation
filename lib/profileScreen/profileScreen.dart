@@ -1,137 +1,159 @@
-import 'package:bondtime/widgets/skillCard.dart';
 import 'package:bondtime/widgets/statCard.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key});
+  const ProfileScreen({Key? key}) : super(key: key);
+
+  /// Computes "Xy Ym Zd" style age from a date string (e.g. "23/1/2025").
+  String _calculateAge(String dobString) {
+    // If dobString is empty or invalid, return an empty placeholder.
+    if (dobString.isEmpty || !dobString.contains('/')) {
+      return '';
+    }
+
+    try {
+      // Expected format: "DD/MM/YYYY"
+      final parts = dobString.split('/');
+      final day = int.parse(parts[0]);
+      final month = int.parse(parts[1]);
+      final year = int.parse(parts[2]);
+
+      final birthday = DateTime(year, month, day);
+      final now = DateTime.now();
+
+      // If dob is in the future, just show 0y 0m 0d as a fallback.
+      if (birthday.isAfter(now)) {
+        return '0y 0m 0d';
+      }
+
+      // Calculate difference in days.
+      final totalDays = now.difference(birthday).inDays;
+
+      // Approximate calculation for years, months, and days.
+      int years = totalDays ~/ 365;
+      int remainingDays = totalDays % 365;
+      int months = remainingDays ~/ 30;
+      int days = remainingDays % 30;
+
+      return '${years}y ${months}m ${days}d';
+    } catch (_) {
+      // If there's an error parsing, return empty or "0y 0m 0d"
+      return '';
+    }
+  }
+
+  /// Fetch the document for the currently logged-in user.
+  Future<DocumentSnapshot<Map<String, dynamic>>> _fetchUserDoc() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      // If no user is signed in, throw an error or handle as needed.
+      throw Exception('No user is currently signed in.');
+    }
+    return FirebaseFirestore.instance.collection('users').doc(user.uid).get()
+        as Future<DocumentSnapshot<Map<String, dynamic>>>;
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF5F9FA),
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: const BackButton(color: Colors.black),
-        centerTitle: true,
-        title: const Text("Profile", style: TextStyle(color: Colors.black)),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.settings, color: Colors.black),
-            onPressed: () {},
-          ),
-        ],
+    // Wrap the page with a custom theme applying the "InterTight" font.
+    return Theme(
+      data: Theme.of(context).copyWith(
+        textTheme: Theme.of(context).textTheme.apply(fontFamily: 'InterTight'),
       ),
-      body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        children: [
-          const SizedBox(height: 20),
+      child: Scaffold(
+        backgroundColor: const Color(0xFFF5F9FA),
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          leading: const BackButton(color: Colors.black),
+          centerTitle: true,
+          title: const Text("Profile", style: TextStyle(color: Colors.black)),
+          // Settings button removed.
+        ),
+        body: FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+          future: _fetchUserDoc(),
+          builder: (context, snapshot) {
+            // Loading state.
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-          // Avatar, name and age in a row
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Container(
-                width: 80,
-                height: 80,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black26,
-                      blurRadius: 6,
-                      offset: Offset(0, 3),
-                    ),
-                  ],
-                ),
-                child: ClipOval(
-                  child: SvgPicture.asset(
-                    'assets/baby.svg',
-                    fit: BoxFit.cover,
-                    placeholderBuilder:
-                        (_) => Container(color: Colors.grey[300]),
-                  ),
-                ),
+            // Error state.
+            if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            }
+
+            // No data found.
+            if (!snapshot.hasData || !snapshot.data!.exists) {
+              return const Center(child: Text("No data found."));
+            }
+
+            // Data retrieved successfully.
+            final userData = snapshot.data!.data()!;
+            final childData = userData['child'] ?? {};
+
+            final firstName = childData['firstName'] ?? '';
+            final lastName = childData['lastName'] ?? '';
+            final dobString = childData['dob'] ?? '';
+
+            final birthHeight = childData['birthHeight']?.toString() ?? '';
+            final birthWeight = childData['birthWeight']?.toString() ?? '';
+            final currentHeight = childData['currentHeight']?.toString() ?? '';
+            final currentWeight = childData['currentWeight']?.toString() ?? '';
+
+            // Generate age string from the dob.
+            final ageString = _calculateAge(dobString);
+
+            return ListView(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 20,
               ),
-              const SizedBox(width: 16),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
-                  Text.rich(
-                    TextSpan(
-                      children: [
-                        TextSpan(
-                          text: 'Juan Jr. ',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),
+              children: [
+                // Top section: Baby's Name & Age (centered)
+                Center(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        '$firstName $lastName',
+                        style: const TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
                         ),
-                        TextSpan(
-                          text: '(Sara’s baby)',
-                          style: TextStyle(fontSize: 16, color: Colors.black),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        "(${userData['firstName']}'s baby)",
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: Colors.black,
                         ),
-                      ],
-                    ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        ageString,
+                        style: const TextStyle(
+                          color: Colors.blue,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
                   ),
-                  SizedBox(height: 4),
-                  Text(
-                    "00y 7m 12d",
-                    style: TextStyle(color: Colors.blue, fontSize: 14),
-                  ),
-                ],
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 20),
-
-          // Scrollable Stat Cards
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: const [
-                StatCard(label: "Weight", value: "8kg"),
-                SizedBox(width: 10),
-                StatCard(label: "Height", value: "69.2 cm"),
+                ),
+                const SizedBox(height: 20),
+                // Display stat cards (full width)
+                StatCard(label: "Birth Weight", value: '${birthWeight}kg'),
+                StatCard(label: "Birth Height", value: '${birthHeight}cm'),
+                StatCard(label: "Current Weight", value: '${currentWeight}kg'),
+                StatCard(label: "Current Height", value: '${currentHeight}cm'),
               ],
-            ),
-          ),
-
-          const SizedBox(height: 20),
-
-          // Skill Cards
-          Wrap(
-            spacing: 10,
-            runSpacing: 10,
-            children: const [
-              SkillCard(
-                title: "Fine\nMotor Skills",
-                value: 3.5,
-                color: Color(0xFFDFF8E5),
-              ),
-              SkillCard(
-                title: "Gross\nMotor Skills",
-                value: 3.5,
-                color: Color(0xFFDDEAFE),
-              ),
-              SkillCard(
-                title: "Sensory\nDevelopment",
-                value: 3.5,
-                color: Color(0xFFFFE5E5),
-              ),
-              SkillCard(
-                title: "Communication\nSkills",
-                value: 3.5,
-                color: Color(0xFFFFF5CC),
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 20),
-        ],
+            );
+          },
+        ),
       ),
     );
   }
