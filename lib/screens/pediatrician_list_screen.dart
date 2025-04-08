@@ -10,7 +10,7 @@ import '../widgets/custom_app_bar.dart';
 var logger = Logger();
 
 class PediatricianListScreen extends StatefulWidget {
-  const PediatricianListScreen({super.key});
+  const PediatricianListScreen({Key? key}) : super(key: key);
 
   @override
   PediatricianListScreenState createState() => PediatricianListScreenState();
@@ -19,11 +19,9 @@ class PediatricianListScreen extends StatefulWidget {
 class PediatricianListScreenState extends State<PediatricianListScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-
-  // 🔥 Added FocusNode for Search Bar
+  // FocusNode for Search Bar
   final FocusNode _searchFocusNode = FocusNode();
-
-  // 🔥 Search Query State
+  // Search query state
   String _searchQuery = '';
 
   @override
@@ -31,7 +29,7 @@ class PediatricianListScreenState extends State<PediatricianListScreen>
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
 
-    // 🔥 Prevent Search Bar from Auto-Focusing on Resume
+    // Prevent Search Bar from Auto-Focusing after resume
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_searchFocusNode.hasFocus) {
         FocusScope.of(context).unfocus();
@@ -42,11 +40,11 @@ class PediatricianListScreenState extends State<PediatricianListScreen>
   @override
   void dispose() {
     _tabController.dispose();
-    _searchFocusNode.dispose(); // 🔥 Dispose the FocusNode
+    _searchFocusNode.dispose();
     super.dispose();
   }
 
-  // 🔥 Filtered Pediatricians List
+  // Filter pediatricians based on the search query
   List<Map<String, String>> get _filteredPediatricians {
     if (_searchQuery.isEmpty) {
       return pediatricians;
@@ -62,7 +60,7 @@ class PediatricianListScreenState extends State<PediatricianListScreen>
 
   @override
   Widget build(BuildContext context) {
-    // 🔥 Wrapped with GestureDetector to unfocus when tapping outside
+    // Wrap with GestureDetector to unfocus the search bar when tapping outside
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () {
@@ -71,18 +69,16 @@ class PediatricianListScreenState extends State<PediatricianListScreen>
         }
       },
       child: Scaffold(
-        backgroundColor: Color(0xFFFEFEFE),
-        // AppBar with BondTime Logo
+        backgroundColor: const Color(0xFFFEFEFE),
+        // Custom AppBar with BondTime Logo and back button
         appBar: PreferredSize(
-          preferredSize: Size.fromHeight(45),
-          child: CustomAppBar(showBackButton: true),
+          preferredSize: const Size.fromHeight(45),
+          child: const CustomAppBar(showBackButton: true),
         ),
-
-        // Main Body with Tabs
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Search Bar
+            // Custom Search Bar
             Padding(
               padding: const EdgeInsets.all(15.0),
               child: CustomSearchBar(
@@ -94,34 +90,32 @@ class PediatricianListScreenState extends State<PediatricianListScreen>
                 },
               ),
             ),
-
-            // Tab Bar
+            // Tab Bar for Suggested and Favorites
             Transform.translate(
-              offset: Offset(-30, 0),
+              offset: const Offset(-30, 0),
               child: TabBar(
                 controller: _tabController,
                 isScrollable: true,
                 labelColor: Colors.black,
-                unselectedLabelColor: Color(0xFFC9C9C9),
-                indicator: BoxDecoration(),
-                labelStyle: TextStyle(
+                unselectedLabelColor: const Color(0xFFC9C9C9),
+                indicator: const BoxDecoration(),
+                labelStyle: const TextStyle(
                   fontFamily: 'InterTight',
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
                 ),
-                labelPadding: EdgeInsets.only(right: 15),
+                labelPadding: const EdgeInsets.only(right: 15),
                 splashFactory: NoSplash.splashFactory,
-                overlayColor: WidgetStateProperty.all(Colors.transparent),
-                tabs: [Tab(text: 'Suggested'), Tab(text: 'Favorites')],
+                overlayColor: MaterialStateProperty.all(Colors.transparent),
+                tabs: const [Tab(text: 'Suggested'), Tab(text: 'Favorites')],
               ),
             ),
-
-            // Tab Views
+            // Tab Views for each category
             Expanded(
               child: TabBarView(
                 controller: _tabController,
                 children: [
-                  // Suggested
+                  // Suggested Pediatricians
                   ListView.builder(
                     itemCount: _filteredPediatricians.length,
                     itemBuilder: (context, index) {
@@ -133,15 +127,13 @@ class PediatricianListScreenState extends State<PediatricianListScreen>
                       );
                     },
                   ),
-
-                  // Favorites
+                  // Favorites (using Provider)
                   Consumer<FavoritesProvider>(
                     builder: (context, favoritesProvider, child) {
                       final favorites = favoritesProvider.favorites;
                       if (favorites.isEmpty) {
-                        return Center(child: Text('No Favorites Yet'));
+                        return const Center(child: Text('No Favorites Yet'));
                       }
-
                       return ListView.builder(
                         itemCount: favorites.length,
                         itemBuilder: (context, index) {
@@ -150,7 +142,6 @@ class PediatricianListScreenState extends State<PediatricianListScreen>
                           final imagePath =
                               favorite['imagePath'] ??
                               'assets/images/doctor.jpg';
-
                           return PediatricianCard(
                             name: name,
                             title: 'Consultant Pediatrician',

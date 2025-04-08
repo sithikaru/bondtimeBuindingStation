@@ -4,71 +4,57 @@ import '../widgets/info_card.dart';
 import '../widgets/profile_picture_section.dart';
 import '../widgets/action_buttons.dart';
 
-// Changed from StatelessWidget to StatefulWidget
 class PediatricianDetailScreen extends StatefulWidget {
-  final Map<String, String> pediatricianDetails; // 🔥 Updated to accept details
+  final Map<String, String> pediatricianDetails; // Accept details dynamically
 
-  const PediatricianDetailScreen({
-    super.key,
-    required this.pediatricianDetails,
-  });
+  const PediatricianDetailScreen({Key? key, required this.pediatricianDetails})
+    : super(key: key);
 
   @override
   State<PediatricianDetailScreen> createState() =>
       _PediatricianDetailScreenState();
 }
 
-// Created State Class
 class _PediatricianDetailScreenState extends State<PediatricianDetailScreen> {
-  // Added State Variable to Track Favorite Status
-  bool isFavorite = false;
-
-  // 🔥 NEW: ScrollController and Variables for Opacity and Elevation
+  // State variable tracking the scroll for AppBar opacity
   final ScrollController _scrollController = ScrollController();
-  double _opacity = 0.0; // Controls AppBar Opacity
+  double _opacity = 0.0;
 
   @override
   void initState() {
     super.initState();
-    // 🔥 NEW: Listener for Scroll Position
     _scrollController.addListener(() {
       double offset = _scrollController.offset;
       setState(() {
-        // 🔥 UPDATED: Gradually increase opacity
-        _opacity = (offset / 200).clamp(0, 1);
+        _opacity = (offset / 200).clamp(0.0, 1.0);
       });
     });
   }
 
   @override
   void dispose() {
-    _scrollController.dispose(); // 🔥 NEW: Dispose ScrollController
+    _scrollController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    // Extracting pediatrician details from the Map
+    // Extract pediatrician details from the provided Map
     final String name = widget.pediatricianDetails['name'] ?? 'Unknown';
     final String title = widget.pediatricianDetails['title'] ?? '';
     final String imagePath =
         widget.pediatricianDetails['imagePath'] ?? 'assets/images/doctor.jpg';
 
     return Scaffold(
-      backgroundColor: Color(0xFFFEFEFE), // Off-White Background
-      // Use this to allow body to go behind the AppBar
+      backgroundColor: const Color(0xFFFEFEFE),
       extendBodyBehindAppBar: true,
-
-      // 🔥 UPDATED: Transparent AppBar with Dynamic Opacity
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(80), // Custom Height
+        preferredSize: const Size.fromHeight(80),
         child: Container(
-          color: Colors.white.withAlpha(
-            (_opacity * 255).toInt(),
-          ), // 🔥 Dynamic Opacity
+          color: Colors.white.withAlpha((_opacity * 255).toInt()),
           child: Stack(
             children: [
-              // 🔥 Dynamic Shadow
+              // Dynamic Shadow based on opacity
               Positioned.fill(
                 child: Container(
                   decoration: BoxDecoration(
@@ -76,15 +62,15 @@ class _PediatricianDetailScreenState extends State<PediatricianDetailScreen> {
                       BoxShadow(
                         color: Colors.black.withAlpha(
                           (_opacity * 0.2 * 255).toInt(),
-                        ), // Dynamic Shadow
+                        ),
                         blurRadius: 20,
-                        offset: Offset(0, 4),
+                        offset: const Offset(0, 4),
                       ),
                     ],
                   ),
                 ),
               ),
-              // BondTime Logo at Top-Left
+              // BondTime Logo (SVG)
               Positioned(
                 top: 35,
                 left: 20,
@@ -93,13 +79,13 @@ class _PediatricianDetailScreenState extends State<PediatricianDetailScreen> {
                   width: 112,
                   height: 22,
                   fit: BoxFit.contain,
-                  colorFilter: ColorFilter.mode(
+                  colorFilter: const ColorFilter.mode(
                     Color(0xFF212529),
                     BlendMode.srcIn,
                   ),
                 ),
               ),
-              // 🔥 Arrow-Back Button Below the Logo
+              // Arrow Back Button (SVG)
               Positioned(
                 top: 58,
                 left: 3,
@@ -108,8 +94,8 @@ class _PediatricianDetailScreenState extends State<PediatricianDetailScreen> {
                     'assets/icons/arrow-back.svg',
                     width: 34,
                     height: 34,
-                    colorFilter: ColorFilter.mode(
-                      Color(0xFF212529), // 🔥 Always Dark Neutral
+                    colorFilter: const ColorFilter.mode(
+                      Color(0xFF212529),
                       BlendMode.srcIn,
                     ),
                   ),
@@ -120,26 +106,23 @@ class _PediatricianDetailScreenState extends State<PediatricianDetailScreen> {
           ),
         ),
       ),
-
-      // Main Body
       body: SingleChildScrollView(
-        controller: _scrollController, // 🔥 NEW: Attach ScrollController
-        physics: BouncingScrollPhysics(),
+        controller: _scrollController, // Attach ScrollController
+        physics: const BouncingScrollPhysics(),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // 🔥 Profile Picture Section with Dynamic Data
+            // Profile Picture Section with the doctor’s image and name
             ProfilePictureSection(imagePath: imagePath, pediatricianName: name),
-
-            // Overlapping Container
+            // Overlapping container below the profile section
             Transform.translate(
-              offset: Offset(0, -38), // Cleaner Overlap
+              offset: const Offset(0, -38),
               child: Container(
                 width: double.infinity,
-                padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
-                margin: EdgeInsets.only(top: 10),
-                decoration: BoxDecoration(
-                  color: Color(0xFFFEFEFE), // Consistent Background Color
+                padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
+                margin: const EdgeInsets.only(top: 10),
+                decoration: const BoxDecoration(
+                  color: Color(0xFFFEFEFE),
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(30),
                     topRight: Radius.circular(30),
@@ -148,7 +131,7 @@ class _PediatricianDetailScreenState extends State<PediatricianDetailScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    // 🔥 Dynamic Name and Title (Aligned to the Left)
+                    // Doctor name and title
                     Container(
                       alignment: Alignment.centerLeft,
                       child: Column(
@@ -157,7 +140,7 @@ class _PediatricianDetailScreenState extends State<PediatricianDetailScreen> {
                         children: [
                           Text(
                             name,
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 20.16,
                               fontWeight: FontWeight.w500,
                               color: Color(0xFF212529),
@@ -165,12 +148,12 @@ class _PediatricianDetailScreenState extends State<PediatricianDetailScreen> {
                               height: 1.0,
                             ),
                           ),
-                          SizedBox(height: 4),
+                          const SizedBox(height: 4),
                           GestureDetector(
                             onTap: () {},
                             child: Text(
                               title,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 16.15,
                                 fontWeight: FontWeight.w400,
                                 color: Color(0xFF5A87FE),
@@ -182,9 +165,8 @@ class _PediatricianDetailScreenState extends State<PediatricianDetailScreen> {
                         ],
                       ),
                     ),
-
-                    SizedBox(height: 20), // Gap
-                    // Info Cards
+                    const SizedBox(height: 20),
+                    // Info Cards in a grid layout
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 0),
                       child: LayoutBuilder(
@@ -197,8 +179,8 @@ class _PediatricianDetailScreenState extends State<PediatricianDetailScreen> {
                             mainAxisSpacing: 0,
                             shrinkWrap: true,
                             padding: EdgeInsets.zero,
-                            physics: NeverScrollableScrollPhysics(),
-                            children: [
+                            physics: const NeverScrollableScrollPhysics(),
+                            children: const [
                               InfoCard(
                                 title: '200+',
                                 subtitle: 'Online Patients',
@@ -224,10 +206,9 @@ class _PediatricianDetailScreenState extends State<PediatricianDetailScreen> {
                         },
                       ),
                     ),
-
-                    SizedBox(height: 20),
-                    // Action Buttons
-                    ActionButtons(),
+                    const SizedBox(height: 20),
+                    // Action Buttons (e.g., call, SMS)
+                    const ActionButtons(),
                   ],
                 ),
               ),
@@ -235,12 +216,6 @@ class _PediatricianDetailScreenState extends State<PediatricianDetailScreen> {
           ],
         ),
       ),
-
-      // // Bottom Navigation Bar (Fixed at the Bottom)
-      // bottomNavigationBar: BottomNavigationBar(
-      //   currentIndex: 3,
-      //   onTap: (index) {}, items: [],
-      // ),
     );
   }
 }

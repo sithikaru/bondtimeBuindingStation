@@ -1,10 +1,12 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:android_intent_plus/android_intent.dart';
+import 'package:logger/logger.dart';
 import '../providers/favorites_provider.dart';
 import '../screens/pediatrician_detail_screen.dart';
-import 'package:logger/logger.dart';
 
 var logger = Logger();
 
@@ -12,7 +14,7 @@ class PediatricianCard extends StatelessWidget {
   final String name;
   final String title;
   final String imagePath;
-  final bool isFavoriteTab; // 🔥 To identify if it's in Favorites Tab
+  final bool isFavoriteTab; // To identify if it's in Favorites Tab
 
   const PediatricianCard({
     super.key,
@@ -22,24 +24,71 @@ class PediatricianCard extends StatelessWidget {
     this.isFavoriteTab = false,
   });
 
+  // Method to launch the phone dialer using Android's DIAL action.
+  Future<void> _launchPhone(String phoneNumber) async {
+    if (Platform.isAndroid) {
+      try {
+        final AndroidIntent intent = AndroidIntent(
+          // Use DIAL instead of CALL to let the user confirm the call.
+          action: 'android.intent.action.DIAL',
+          data: 'tel:$phoneNumber',
+        );
+        await intent.launch();
+      } catch (e) {
+        logger.e("Error launching phone dialer on Android: $e");
+      }
+    } else {
+      // Fallback for non-Android platforms.
+      final Uri telUri = Uri(scheme: 'tel', path: phoneNumber);
+      if (await canLaunchUrl(telUri)) {
+        await launchUrl(telUri, mode: LaunchMode.externalApplication);
+      } else {
+        logger.e('Could not launch phone app using url_launcher');
+      }
+    }
+  }
+
+  // Method to launch the SMS app using Android's SENDTO action with "smsto:".
+  Future<void> _launchSMS(String phoneNumber) async {
+    if (Platform.isAndroid) {
+      try {
+        final AndroidIntent intent = AndroidIntent(
+          action: 'android.intent.action.SENDTO',
+          data: 'smsto:$phoneNumber',
+        );
+        await intent.launch();
+      } catch (e) {
+        logger.e("Error launching SMS intent on Android: $e");
+      }
+    } else {
+      // Fallback for non-Android platforms.
+      final Uri smsUri = Uri(scheme: 'sms', path: phoneNumber);
+      if (await canLaunchUrl(smsUri)) {
+        await launchUrl(smsUri, mode: LaunchMode.externalApplication);
+      } else {
+        logger.e('Could not launch SMS app using url_launcher');
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Access FavoritesProvider for managing favorites
+    // Access FavoritesProvider for managing favorites.
     final favoritesProvider = Provider.of<FavoritesProvider>(context);
 
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
       child: Container(
         decoration: BoxDecoration(
           color: Colors.transparent,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: Color(0xFF000000), width: 1),
+          border: Border.all(color: const Color(0xFF000000), width: 1),
         ),
         child: Card(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
-          color: Color(0xFFF5F5F5),
+          color: const Color(0xFFF5F5F5),
           margin: EdgeInsets.zero,
           elevation: 3,
           shadowColor: Colors.black.withAlpha(25),
@@ -48,17 +97,18 @@ class PediatricianCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Doctor Details Row.
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Name and Title
+                    // Name, Title, and Rating.
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             name,
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 20.16,
                               fontWeight: FontWeight.w500,
                               color: Color(0xFF212529),
@@ -67,18 +117,18 @@ class PediatricianCard extends StatelessWidget {
                           ),
                           Text(
                             title,
-                            style: TextStyle(
+                            style: const TextStyle(
                               color: Colors.grey,
                               fontFamily: 'InterTight',
                               fontSize: 16.15,
                               fontWeight: FontWeight.w400,
                             ),
                           ),
-                          SizedBox(height: 6),
+                          const SizedBox(height: 6),
                           Row(
                             children: List.generate(
                               5,
-                              (index) => Icon(
+                              (index) => const Icon(
                                 Icons.star,
                                 color: Colors.amber,
                                 size: 16,
@@ -88,8 +138,7 @@ class PediatricianCard extends StatelessWidget {
                         ],
                       ),
                     ),
-
-                    // Profile Image
+                    // Profile Image.
                     Container(
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
@@ -97,7 +146,7 @@ class PediatricianCard extends StatelessWidget {
                           BoxShadow(
                             color: Colors.black.withAlpha(25),
                             blurRadius: 8,
-                            offset: Offset(0, 4),
+                            offset: const Offset(0, 4),
                           ),
                         ],
                       ),
@@ -108,18 +157,16 @@ class PediatricianCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(height: 15),
-
-                // Action Buttons
+                const SizedBox(height: 15),
+                // Action Buttons Row.
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    // Reserve Button
+                    // Reserve Button (navigates to the detail screen).
                     ElevatedButton(
                       onPressed: () {
                         FocusScope.of(context).unfocus();
-
-                        Future.delayed(Duration(milliseconds: 100), () {
+                        Future.delayed(const Duration(milliseconds: 100), () {
                           if (context.mounted) {
                             Navigator.push(
                               context,
@@ -140,7 +187,7 @@ class PediatricianCard extends StatelessWidget {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.black,
                         foregroundColor: Colors.white,
-                        padding: EdgeInsets.symmetric(
+                        padding: const EdgeInsets.symmetric(
                           vertical: 10,
                           horizontal: 25,
                         ),
@@ -150,7 +197,7 @@ class PediatricianCard extends StatelessWidget {
                         elevation: 0,
                         shadowColor: Colors.transparent,
                       ),
-                      child: Text(
+                      child: const Text(
                         'Reserve',
                         style: TextStyle(
                           fontSize: 16.15,
@@ -159,26 +206,17 @@ class PediatricianCard extends StatelessWidget {
                         ),
                       ),
                     ),
-
-                    // SMS Button
-                    SizedBox(width: 6),
+                    // SMS Button.
+                    const SizedBox(width: 6),
                     SizedBox(
                       width: 42,
                       height: 42,
                       child: IconButton(
                         onPressed: () async {
-                          final Uri smsUri = Uri(
-                            scheme: 'sms',
-                            path: '1234567890',
-                          );
-                          if (await canLaunchUrl(smsUri)) {
-                            await launchUrl(smsUri);
-                          } else {
-                            logger.e('Could not launch SMS app');
-                          }
+                          await _launchSMS("1234567890");
                         },
                         padding: EdgeInsets.zero,
-                        constraints: BoxConstraints(),
+                        constraints: const BoxConstraints(),
                         icon: SvgPicture.asset(
                           'assets/icons/sms.svg',
                           fit: BoxFit.contain,
@@ -187,26 +225,17 @@ class PediatricianCard extends StatelessWidget {
                         ),
                       ),
                     ),
-
-                    // Tel Button
-                    SizedBox(width: 6),
+                    // Telephone Button.
+                    const SizedBox(width: 6),
                     SizedBox(
                       width: 42,
                       height: 42,
                       child: IconButton(
                         onPressed: () async {
-                          final Uri telUri = Uri(
-                            scheme: 'tel',
-                            path: '1234567890',
-                          );
-                          if (await canLaunchUrl(telUri)) {
-                            await launchUrl(telUri);
-                          } else {
-                            logger.e('Could not launch Phone app');
-                          }
+                          await _launchPhone("1234567890");
                         },
                         padding: EdgeInsets.zero,
-                        constraints: BoxConstraints(),
+                        constraints: const BoxConstraints(),
                         icon: SvgPicture.asset(
                           'assets/icons/tel.svg',
                           fit: BoxFit.contain,
@@ -215,9 +244,8 @@ class PediatricianCard extends StatelessWidget {
                         ),
                       ),
                     ),
-
-                    // If in Favorites Tab, show Heart
-                    if (isFavoriteTab) SizedBox(width: 34),
+                    // If in Favorites Tab, show Heart Icon for toggling favorite status.
+                    if (isFavoriteTab) const SizedBox(width: 34),
                     if (isFavoriteTab)
                       IconButton(
                         icon: Icon(
