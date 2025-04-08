@@ -30,10 +30,10 @@ class ApiService {
           "Failed to fetch activities: ${response.statusCode} - ${response.body}",
         );
       }
-    } on TimeoutException catch (e) {
+    } on TimeoutException {
       // print("Request timed out: $e");
       throw Exception("Request timed out. Check server connection.");
-    } on SocketException catch (e) {
+    } on SocketException {
       // print("Socket error: $e");
       throw Exception("Network error. Check your connection.");
     } catch (e) {
@@ -125,10 +125,10 @@ class ApiService {
           "Failed to submit feedback: ${response.statusCode} - ${response.body}",
         );
       }
-    } on TimeoutException catch (e) {
+    } on TimeoutException {
       // print("Feedback request timed out: $e");
       throw Exception("Feedback request timed out. Check server connection.");
-    } on SocketException catch (e) {
+    } on SocketException {
       // print("Socket error: $e");
       throw Exception("Network error. Check your connection.");
     } catch (e) {

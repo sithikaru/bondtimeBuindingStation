@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({Key? key}) : super(key: key);
+  const ProfileScreen({super.key});
 
   /// Computes "Xy Ym Zd" style age from a date string (e.g. "23/1/2025").
   String _calculateAge(String dobString) {
@@ -51,13 +51,11 @@ class ProfileScreen extends StatelessWidget {
       // If no user is signed in, throw an error or handle as needed.
       throw Exception('No user is currently signed in.');
     }
-    return FirebaseFirestore.instance.collection('users').doc(user.uid).get()
-        as Future<DocumentSnapshot<Map<String, dynamic>>>;
+    return FirebaseFirestore.instance.collection('users').doc(user.uid).get();
   }
 
   @override
   Widget build(BuildContext context) {
-    // Wrap the page with a custom theme applying the "InterTight" font.
     return Theme(
       data: Theme.of(context).copyWith(
         textTheme: Theme.of(context).textTheme.apply(fontFamily: 'InterTight'),
@@ -73,27 +71,42 @@ class ProfileScreen extends StatelessWidget {
             "Baby's Profile",
             style: TextStyle(color: Colors.black),
           ),
-          // Settings button removed.
         ),
         body: FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
           future: _fetchUserDoc(),
           builder: (context, snapshot) {
-            // Loading state.
+            /// 🔄 While loading user data
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
+              return const Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CircularProgressIndicator(color: Colors.black),
+                    SizedBox(height: 12),
+                    Text(
+                      "Loading baby profile...",
+                      style: TextStyle(
+                        fontFamily: 'InterTight',
+                        fontSize: 16,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ],
+                ),
+              );
             }
 
-            // Error state.
+            /// ❌ Error state
             if (snapshot.hasError) {
               return Center(child: Text('Error: ${snapshot.error}'));
             }
 
-            // No data found.
+            /// 🚫 No data state
             if (!snapshot.hasData || !snapshot.data!.exists) {
               return const Center(child: Text("No data found."));
             }
 
-            // Data retrieved successfully.
+            // ✅ Data available
             final userData = snapshot.data!.data()!;
             final childData = userData['child'] ?? {};
 
@@ -106,7 +119,6 @@ class ProfileScreen extends StatelessWidget {
             final currentHeight = childData['currentHeight']?.toString() ?? '';
             final currentWeight = childData['currentWeight']?.toString() ?? '';
 
-            // Generate age string from the dob.
             final ageString = _calculateAge(dobString);
 
             return ListView(
@@ -115,10 +127,8 @@ class ProfileScreen extends StatelessWidget {
                 vertical: 20,
               ),
               children: [
-                // Top section: Baby's Name & Age (centered)
                 Center(
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
                         '$firstName $lastName',
@@ -148,11 +158,10 @@ class ProfileScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 20),
-                // Display stat cards (full width)
-                StatCard(label: "Birth Weight", value: '${birthWeight}kg'),
-                StatCard(label: "Birth Height", value: '${birthHeight}cm'),
-                StatCard(label: "Current Weight", value: '${currentWeight}kg'),
-                StatCard(label: "Current Height", value: '${currentHeight}cm'),
+                StatCard(label: "Birth Weight", value: '$birthWeight kg'),
+                StatCard(label: "Birth Height", value: '$birthHeight cm'),
+                StatCard(label: "Current Weight", value: '$currentWeight kg'),
+                StatCard(label: "Current Height", value: '$currentHeight cm'),
               ],
             );
           },

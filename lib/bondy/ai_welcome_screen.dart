@@ -6,7 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class MergedScreen extends StatefulWidget {
-  const MergedScreen({Key? key}) : super(key: key);
+  const MergedScreen({super.key});
 
   @override
   _MergedScreenState createState() => _MergedScreenState();

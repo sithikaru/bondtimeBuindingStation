@@ -283,28 +283,28 @@ class _SignInScreenState extends State<SignInScreen> {
               ),
             ),
             const SizedBox(height: 10),
-            Row(
-              children: const [
-                Expanded(child: Divider(thickness: 1)),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Text("or"),
-                ),
-                Expanded(child: Divider(thickness: 1)),
-              ],
-            ),
+            // Row(
+            //   children: const [
+            //     Expanded(child: Divider(thickness: 1)),
+            //     Padding(
+            //       padding: EdgeInsets.symmetric(horizontal: 8.0),
+            //       child: Text("or"),
+            //     ),
+            //     Expanded(child: Divider(thickness: 1)),
+            //   ],
+            // ),
             // const SizedBox(height: 20),
             // _buildSocialButton(
             //   "Continue with Apple",
             //   "assets/images/apple.svg",
             //   _signInWithApple,
             // ),
-            const SizedBox(height: 15),
-            _buildSocialButton(
-              "Continue with Google",
-              "assets/images/google.svg",
-              _signInWithGoogle,
-            ),
+            // const SizedBox(height: 15),
+            // _buildSocialButton(
+            //   "Continue with Google",
+            //   "assets/images/google.svg",
+            //   _signInWithGoogle,
+            // ),
             // const SizedBox(height: 15),
             // _buildSocialButton(
             //   "Continue with Facebook",
