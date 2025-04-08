@@ -90,7 +90,9 @@ class _RewardsScreenState extends State<RewardsScreen> {
     if (user == null) return;
     final userId = user.uid;
     // Replace with your actual backend URL.
-    final url = Uri.parse("https://your-backend-url/update-streak");
+    final url = Uri.parse(
+      "https://bondtime-backend-nodejs1.vercel.app/update-streak",
+    );
     try {
       final response = await http.post(
         url,

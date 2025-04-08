@@ -13,6 +13,7 @@ import 'package:bondtime/signup/baby_registration_screen.dart';
 import 'package:bondtime/signup/onboarding_screen.dart';
 import 'package:bondtime/signup/role_selection_page.dart';
 import 'package:bondtime/signup/sign_up_screen.dart';
+import 'package:bondtime/terms_screen.dart';
 import 'package:bondtime/welcomePages/onboarding_screen.dart';
 import 'package:bondtime/welcomePages/splash_screen.dart';
 import 'package:bondtime/providers/favorites_provider.dart'; // <-- Make sure this path is correct
@@ -80,6 +81,7 @@ class MyApp extends StatelessWidget {
         '/activities': (context) => const ActivityListScreen(),
         '/welcomeOnBoard': (context) => const OnboardingWelcomeScreen(),
         '/profile': (context) => const ProfileScreen(),
+        '/terms': (context) => const TermsScreen(),
       },
     );
   }
