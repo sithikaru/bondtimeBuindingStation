@@ -52,29 +52,65 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
     required String userId,
     required String activityId,
   }) async {
-    // This ensures we use local date or use a library like intl if you prefer
-    final dateKey = DateTime.now().toIso8601String().split('T').first;
+    // Expected activityId format: "<userId>_<scheduledDate>_<activityType>"
+    // For example: "c6nEqzciSneNjIY8VonfSOQxAry1_2025-03-29_communication"
+    final parts = activityId.split('_');
 
+    // Validate the activityId format:
+    if (parts.length < 3) {
+      // If the format is unexpected, log and use today's date as a fallback.
+      print(
+        "[saveActivityCompletion] Unexpected activityId format: $activityId. Using today's date as scheduled date.",
+      );
+    }
+
+    // Extract the scheduled date and activity type.
+    final scheduledDate =
+        parts.length >= 3
+            ? parts[1]
+            : DateTime.now().toIso8601String().split('T')[0];
+
+    // In case the activity type itself contains underscores, join the remaining parts.
+    final activityType =
+        parts.length >= 3 ? parts.sublist(2).join('_') : activityId;
+
+    // Use today's date as the completion date.
+    final completionDate = DateTime.now().toIso8601String().split('T')[0];
+
+    print("[saveActivityCompletion] Scheduled date: $scheduledDate");
+    print("[saveActivityCompletion] Completion date: $completionDate");
+    print("[saveActivityCompletion] Activity type: $activityType");
+
+    // Get the document in the "activities" collection using the scheduled date.
     final dateDocRef = FirebaseFirestore.instance
         .collection("users")
         .doc(userId)
         .collection("activities")
-        .doc(dateKey);
+        .doc(scheduledDate);
 
-    // Create the date doc with a top-level field so it's visible in the console
+    // Create the parent document with a placeholder field, if it doesn't exist.
     await dateDocRef.set({'created': true}, SetOptions(merge: true));
 
-    // Now add a doc in "completedActivities"
+    // Construct the document ID for the completed activity
+    final completedActivityDocId = "${userId}_${completionDate}_$activityType";
+    print(
+      "[saveActivityCompletion] Saving completed activity with doc ID: $completedActivityDocId",
+    );
+
     final completedRef = dateDocRef
         .collection("completedActivities")
-        .doc(activityId);
+        .doc(completedActivityDocId);
 
+    // Save the completion details.
     await completedRef.set({
       "completed": true,
       "completedAt": DateTime.now().toIso8601String(),
     }, SetOptions(merge: true));
 
-    print("Saved completion for $activityId on $dateKey for user $userId");
+    print(
+      "[saveActivityCompletion] Saved completion for activityId: $activityId",
+    );
+    print("[saveActivityCompletion] Path: ${completedRef.path}");
   }
 
   @override
