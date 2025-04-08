@@ -11,16 +11,14 @@ class ActivityListScreen extends StatefulWidget {
 }
 
 class _ActivityListScreenState extends State<ActivityListScreen> {
-  int selectedTabIndex = 0;
-  String selectedFilter = 'All';
-
-  List<Map<String, dynamic>> todayActivities = [];
-  List<Map<String, dynamic>> completedActivities = [];
-  List<Map<String, dynamic>> pastActivities = [];
+  // Combined list of all activities instead of separate today/ completed/ past lists.
+  List<Map<String, dynamic>> allActivities = [];
 
   bool isLoading = true;
   String errorMessage = '';
 
+  // Filter dropdown
+  String selectedFilter = 'All';
   final List<Map<String, dynamic>> filterOptions = [
     {'label': 'All', 'color': Colors.black},
     {'label': 'Gross Motor Skills', 'color': Colors.blue},
@@ -43,9 +41,7 @@ class _ActivityListScreenState extends State<ActivityListScreen> {
 
     try {
       final userId = FirebaseAuth.instance.currentUser!.uid;
-      final now = DateTime.now();
-      final todayKey = now.toIso8601String().split('T').first;
-
+      // Get all "activities" documents (each document represents a date key).
       final snapshot =
           await FirebaseFirestore.instance
               .collection('users')
@@ -53,51 +49,74 @@ class _ActivityListScreenState extends State<ActivityListScreen> {
               .collection('activities')
               .get();
 
-      List<Map<String, dynamic>> today = [];
-      List<Map<String, dynamic>> completed = [];
-      List<Map<String, dynamic>> past = [];
+      List<Map<String, dynamic>> tempActivities = [];
 
+      // Iterate over each date document.
       for (var doc in snapshot.docs) {
-        String dateKey = doc.id;
+        final String dateKey = doc.id;
         final data = doc.data();
 
-        if (data['activities'] == null || data['activities'] is! Map) continue;
+        // 1. Process general activities stored in a field (if available).
+        if (data.containsKey('activities') && data['activities'] is Map) {
+          Map<String, dynamic> activitiesMap = Map<String, dynamic>.from(
+            data['activities'],
+          );
+          activitiesMap.forEach((key, value) {
+            final activity = Map<String, dynamic>.from(value);
+            activity['activityId'] = key;
+            activity['date'] = dateKey;
 
-        Map<String, dynamic> activities = Map<String, dynamic>.from(
-          data['activities'],
-        );
+            // Normalize and set defaults.
+            final category =
+                (activity['category'] ?? '').toString().toLowerCase();
+            activity['category'] = category;
+            activity['title'] =
+                activity.containsKey('title')
+                    ? activity['title']
+                    : 'Untitled Activity';
+            activity['description'] =
+                activity.containsKey('description')
+                    ? activity['description']
+                    : 'No description available';
+            // If not specified, mark as not completed.
+            activity['completed'] = activity['completed'] == true;
 
-        activities.forEach((key, value) {
-          final activity = Map<String, dynamic>.from(value);
-          activity['activityId'] = key;
+            tempActivities.add(activity);
+          });
+        }
+
+        // 2. Process activities from the "completedActivities" subcollection.
+        final completedSnapshot =
+            await doc.reference.collection('completedActivities').get();
+        for (var compDoc in completedSnapshot.docs) {
+          final compData = compDoc.data();
+          final activity = Map<String, dynamic>.from(compData);
+          activity['activityId'] = compDoc.id;
           activity['date'] = dateKey;
 
+          // Normalize and mark as completed.
           final category =
               (activity['category'] ?? '').toString().toLowerCase();
           activity['category'] = category;
+          activity['completed'] = true;
+          activity['title'] =
+              activity.containsKey('title')
+                  ? activity['title']
+                  : 'Untitled Activity';
+          activity['description'] =
+              activity.containsKey('description')
+                  ? activity['description']
+                  : 'No description available';
 
-          final isCompleted = activity['completed'] == true;
-
-          if (dateKey == todayKey) {
-            today.add(activity);
-          } else {
-            if (isCompleted) {
-              completed.add(activity);
-            } else {
-              past.add(activity);
-            }
-          }
-        });
+          tempActivities.add(activity);
+        }
       }
 
       setState(() {
-        todayActivities = today;
-        completedActivities = completed;
-        pastActivities = past;
+        allActivities = tempActivities;
         isLoading = false;
       });
     } catch (e) {
-      // print("Error fetching activities: $e");
       setState(() {
         errorMessage = 'Failed to fetch activities.';
         isLoading = false;
@@ -105,37 +124,13 @@ class _ActivityListScreenState extends State<ActivityListScreen> {
     }
   }
 
+  // Apply category filtering.
   List<Map<String, dynamic>> get filteredList {
-    List<Map<String, dynamic>> baseList;
-
-    if (selectedTabIndex == 0) {
-      baseList = todayActivities;
-    } else if (selectedTabIndex == 1) {
-      baseList = completedActivities;
-    } else {
-      baseList = pastActivities;
-    }
-
-    if (selectedFilter == 'All') return baseList;
-
+    if (selectedFilter == 'All') return allActivities;
     final key = selectedFilter.toLowerCase().replaceAll(' skills', '');
-
-    return baseList.where((a) {
-      return a['category'].toString().contains(key);
+    return allActivities.where((activity) {
+      return activity['category'].toString().contains(key);
     }).toList();
-  }
-
-  String getTabTitle(int index) {
-    switch (index) {
-      case 0:
-        return "Today";
-      case 1:
-        return "Completed";
-      case 2:
-        return "Past Activities";
-      default:
-        return "";
-    }
   }
 
   @override
@@ -158,40 +153,12 @@ class _ActivityListScreenState extends State<ActivityListScreen> {
               ? const Center(child: CircularProgressIndicator())
               : Column(
                 children: [
-                  // Tabs and Filter Row
+                  // Filter Dropdown (top-right aligned)
                   Padding(
                     padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        // Tab Selector
-                        Row(
-                          children: List.generate(3, (index) {
-                            return GestureDetector(
-                              onTap:
-                                  () =>
-                                      setState(() => selectedTabIndex = index),
-                              child: Padding(
-                                padding: const EdgeInsets.only(right: 24.0),
-                                child: Text(
-                                  getTabTitle(index),
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight:
-                                        selectedTabIndex == index
-                                            ? FontWeight.bold
-                                            : FontWeight.normal,
-                                    color:
-                                        selectedTabIndex == index
-                                            ? Colors.black
-                                            : Colors.grey,
-                                  ),
-                                ),
-                              ),
-                            );
-                          }),
-                        ),
-                        // Filter Dropdown
                         PopupMenuButton<String>(
                           onSelected: (value) {
                             setState(() => selectedFilter = value);
@@ -254,7 +221,7 @@ class _ActivityListScreenState extends State<ActivityListScreen> {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  // Content
+                  // List of all activities
                   Expanded(
                     child:
                         filteredList.isEmpty
@@ -266,7 +233,6 @@ class _ActivityListScreenState extends State<ActivityListScreen> {
                               itemCount: filteredList.length,
                               itemBuilder: (context, index) {
                                 final activity = filteredList[index];
-
                                 String icon;
                                 switch (activity['category']) {
                                   case 'fine motor':

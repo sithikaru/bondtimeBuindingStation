@@ -4,6 +4,7 @@ import 'package:bondtime/activity/activity_list_screen.dart';
 import 'package:bondtime/activity/activity_screen.dart';
 import 'package:bondtime/bondy/ai_welcome_screen.dart';
 import 'package:bondtime/feedback/feedback_screen.dart';
+import 'package:bondtime/profileScreen/profileScreen.dart';
 import 'package:bondtime/rewardScreen/rewards_screen.dart';
 import 'package:bondtime/screens/pediatrician_list_screen.dart';
 import 'package:bondtime/signin/forgot_password_screen.dart';
@@ -12,6 +13,7 @@ import 'package:bondtime/signup/baby_registration_screen.dart';
 import 'package:bondtime/signup/onboarding_screen.dart';
 import 'package:bondtime/signup/role_selection_page.dart';
 import 'package:bondtime/signup/sign_up_screen.dart';
+import 'package:bondtime/terms_screen.dart';
 import 'package:bondtime/welcomePages/onboarding_screen.dart';
 import 'package:bondtime/welcomePages/splash_screen.dart';
 import 'package:bondtime/providers/favorites_provider.dart'; // <-- Make sure this path is correct
@@ -74,10 +76,12 @@ class MyApp extends StatelessWidget {
               durationSpent: 0,
             ),
         '/rewardsScreen': (context) => RewardsScreen(),
-        '/bondy': (context) => const AIWelcomeScreen(),
+        '/bondy': (context) => const MergedScreen(),
         '/pediatricianlist': (context) => const PediatricianListScreen(),
         '/activities': (context) => const ActivityListScreen(),
         '/welcomeOnBoard': (context) => const OnboardingWelcomeScreen(),
+        '/profile': (context) => const ProfileScreen(),
+        '/terms': (context) => const TermsScreen(),
       },
     );
   }

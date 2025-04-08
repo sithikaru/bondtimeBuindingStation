@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:http/http.dart' as http;
 
 class BadgeMilestone {
   final String key;
@@ -76,19 +79,40 @@ class _RewardsScreenState extends State<RewardsScreen> {
   @override
   void initState() {
     super.initState();
-    fetchStreakData();
+    // First, call the update streak endpoint, then fetch the Firestore data.
+    callUpdateStreak().then((_) {
+      fetchStreakData();
+    });
+  }
+
+  Future<void> callUpdateStreak() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+    final userId = user.uid;
+    // Replace with your actual backend URL.
+    final url = Uri.parse(
+      "https://bondtime-backend-nodejs1.vercel.app/update-streak",
+    );
+    try {
+      final response = await http.post(
+        url,
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({"userId": userId}),
+      );
+      print("updateStreak response: ${response.body}");
+    } catch (e) {
+      print("Error calling updateStreak: $e");
+    }
   }
 
   Future<void> fetchStreakData() async {
     final userId = FirebaseAuth.instance.currentUser?.uid;
     if (userId == null) return;
-
     final docRef = FirebaseFirestore.instance
         .collection("users")
         .doc(userId)
         .collection("progress")
         .doc("streak");
-
     final snapshot = await docRef.get();
     if (snapshot.exists) {
       setState(() {
@@ -108,7 +132,7 @@ class _RewardsScreenState extends State<RewardsScreen> {
     final upcoming =
         allMilestones.where((b) => !unlockedBadges.contains(b.key)).toList();
 
-    // Get the last unlocked badge
+    // Get the last unlocked badge (or the first milestone if none)
     final lastUnlocked =
         unlocked.isNotEmpty ? unlocked.last : allMilestones.first;
 
@@ -211,7 +235,6 @@ class _RewardsScreenState extends State<RewardsScreen> {
                 ),
               ),
               SizedBox(height: 24),
-
               // Show Unlocked Badges
               if (unlocked.isNotEmpty) ...[
                 Text(
@@ -233,7 +256,6 @@ class _RewardsScreenState extends State<RewardsScreen> {
                 ),
                 SizedBox(height: 24),
               ],
-
               // Show What's Next
               Text(
                 "What's next",
@@ -261,7 +283,6 @@ class _RewardsScreenState extends State<RewardsScreen> {
 
   Widget badgeTile(BadgeMilestone badge, bool isUnlocked) {
     final progress = (currentStreak / badge.dayTarget).clamp(0.0, 1.0);
-
     return Container(
       margin: EdgeInsets.only(bottom: 12),
       padding: EdgeInsets.all(16),

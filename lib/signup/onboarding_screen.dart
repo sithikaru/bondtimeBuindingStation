@@ -59,13 +59,21 @@ class OnboardingScreen extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    _buildButton("Sign up", isPrimary: false, onTap: () {
-                      Navigator.pushNamed(context, '/sign-up');
-                    }),
+                    _buildButton(
+                      "Sign up",
+                      isPrimary: false,
+                      onTap: () {
+                        Navigator.pushNamed(context, '/terms');
+                      },
+                    ),
                     const SizedBox(height: 10),
-                    _buildButton("Sign in", isPrimary: true, onTap: () {
-                      Navigator.pushNamed(context, '/sign-in');
-                    }),
+                    _buildButton(
+                      "Sign in",
+                      isPrimary: true,
+                      onTap: () {
+                        Navigator.pushNamed(context, '/sign-in');
+                      },
+                    ),
                     const SizedBox(height: 20),
 
                     /// **Footer Text**
@@ -90,8 +98,11 @@ class OnboardingScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildButton(String text,
-      {required bool isPrimary, VoidCallback? onTap}) {
+  Widget _buildButton(
+    String text, {
+    required bool isPrimary,
+    VoidCallback? onTap,
+  }) {
     return SizedBox(
       width: 344,
       height: 58,
@@ -99,9 +110,10 @@ class OnboardingScreen extends StatelessWidget {
         onPressed: onTap,
         style: ElevatedButton.styleFrom(
           backgroundColor: isPrimary ? Colors.black : Colors.white,
-          side: isPrimary
-              ? null
-              : const BorderSide(color: Colors.black, width: 1.5),
+          side:
+              isPrimary
+                  ? null
+                  : const BorderSide(color: Colors.black, width: 1.5),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15),
           ),
